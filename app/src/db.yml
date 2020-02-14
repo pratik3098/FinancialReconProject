@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+
+  db:
+    container_name: db.postgres.facedrive.com
+    image: postgres
+    tty: true
+    restart: always
+    environment:
+      POSTGRES_USER: facedrive
+      POSTGRES_PASSWORD: somepass
+      POSTGRES_DB: fin-rec-db
+  
+    ports:
+    - 5432:5432
+
+       
+

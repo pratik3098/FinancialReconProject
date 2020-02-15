@@ -1,19 +1,19 @@
-const postgres = require('postgres')
+const Client = require('pg').Client
 const xlsx = require('xlsx')
 const path =require('path')
-
 const config= {
     database: 'fin-rec-db',
-    user: 'postgres',
+    user: 'facedrive',
     password: 'somepass',
     port: 5432,
-    host: 'localhost',
-    connection: {
-        application_name: 'facedrive-db-connection'
-    }
+    //host: 'localhost'
+    // For docker toolbox
+    host: '192.168.99.100'
 }
-const sql = postgres('postgres://'+config.user+':'+config.password+'@'+config.host+':'+config.port+'/'+config.database, config)
-console.log(sql)
+
+const sql=new Client(config)
+//const sql = postgres('postgres://'+config.user+':'+config.password+'@'+config.host+':'+config.port+'/'+config.database, config)
+sql.connect().then(()=>{ console.log(config.database +" connected successfuly @" +config.host+'/'+config.port)}).catch(err=>{console.error(err)})
 
 let fc_file= xlsx.readFile(path.resolve(__dirname,"./fc_data.xlsx"))
 let stripe_file = xlsx.readFile(path.resolve(__dirname,'./stripe_data.xlsx'))
@@ -25,7 +25,7 @@ let stripe_data = xlsx.utils.sheet_to_json(stripe_file.Sheets[stripe_file.SheetN
 //console.log(fc_data)
 //console.log(stripe_data)
 
-async function createTable(){
+/*async function createTable(){
     await sql`
     CREATE TABLE facedrive (
         ride_id                   VARCHAR(35) PRIMARY KEY,
@@ -57,6 +57,7 @@ async function createTable(){
     );
    `
 }
+
 
 /*createTable().then(res=>{
     console.log(res)

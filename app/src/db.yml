@@ -1,5 +1,6 @@
 version: '3.1'
-// psql -U facedrive fin-rec-db
+# psql -U facedrive fin-rec-db
+# \c fin-rec-db
 services:
 
   db:

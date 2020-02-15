@@ -15,9 +15,17 @@ let sql
 async function connectToDb(){
     try{
     const dbConfig= config.dbConfig
-    let db = new Client(dbConfig)
-    sql =await db.connect()
+    sql = new Client(dbConfig)
+    await sql.connect()
     console.log(dbConfig.database +"@" +dbConfig.host+'/'+dbConfig.port + " connected successfuly")
+    // Creating enums
+    await sql.query(queries.rideStatus)
+    await sql.query(queries.rprideStatus)
+    await sql.query(queries.uppaymentStatus)
+    await sql.query(queries.couponAppliedStatus)
+    
+    // Creating the facedrive table
+    await sql.query(queries.createTable)
     }
     catch(err){
         console.error(err)
@@ -38,12 +46,10 @@ async function readDataFromExcel(){
 
 async function createDefaultTable(){
    // if (typeof sql !== 'undefined' && sql && sql != null){
-       sql = await sql.query(queries.createTable)
+    
    // }
     //else
      //console.error("SQL: " + sql)
 }
 
-Promise.resolve(connectToDb().catch(err=>{console.error(err)})).then(
-createDefaultTable().catch(err=>{console.error(err)}))
-//readDataFromExcel().catch(err=>{console.error(err)})
+connectToDb().catch(err=>{console.error(err)})

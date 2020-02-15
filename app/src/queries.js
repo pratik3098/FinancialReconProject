@@ -1,7 +1,7 @@
-exports.rideStatus= `CREATE TYPE  rideStatus AS ENUM ('NOT_ACCEPTED','NO_ACCEPT', 'FAILED', 'FINISHED', 'CANCELLED_BY_DRIVER', 'CANCELLED_REQUEST', 'ON_THE_WAY','REQUESTED','STARTED','CANCELLED_BY_CLIENT' )`
-exports.rprideStatus= `CREATE TYPE  rprideStatus AS ENUM ('PAID', 'FAILED', 'READY_TO_PAY' ,'RESERVED')`
-exports.uppaymentStatus = `CREATE TYPE  uppaymentStatus AS ENUM ('PAID', 'FAILED','RESERVED', 'READY_TO_PAY')`
-exports.couponAppliedStatus = `CREATE TYPE  couponAppliedStatus AS ENUM ('succeeded')`
+exports.rideStatus= `CREATE TYPE  rideStatus AS ENUM ('NOT_ACCEPTED','NO_ACCEPT', 'FAILED', 'FINISHED', 'CANCELLED_BY_DRIVER', 'CANCELLED_REQUEST', 'ON_THE_WAY','REQUESTED','STARTED','CANCELLED_BY_CLIENT' ) `
+exports.rprideStatus= `CREATE TYPE  rprideStatus AS ENUM ('NULL','PAID', 'FAILED', 'READY_TO_PAY' ,'RESERVED') `
+exports.uppaymentStatus = `CREATE TYPE  uppaymentStatus AS ENUM ('NULL','PAID', 'FAILED','RESERVED', 'READY_TO_PAY') `
+exports.couponAppliedStatus = `CREATE TYPE  couponAppliedStatus AS ENUM ('NULL','succeeded') `
 exports.close=`);`
 exports.createFacedriveTable= `CREATE TABLE facedrive ( 
     ride_id                   VARCHAR(36) PRIMARY KEY,
@@ -21,9 +21,9 @@ exports.createFacedriveTable= `CREATE TABLE facedrive (
     up_client_pay             INTEGER,
     up_facedrive_fee          INTEGER,
     up_tips                   INTEGER,
-    up_payment_status         uppaymentStatus,
-    stripe_reserve_charge_id  VARCHAR(27) UNIQUE,
-    amount_charged_id         VARCHAR(27) UNIQUE,
+    up_payment_status         uppaymentStatus ,
+    stripe_reserve_charge_id  VARCHAR(27),
+    amount_charged_id         VARCHAR(27),
     up_amount_charged         INTEGER,
     coupon_name               VARCHAR(20),
     coupoun_dollar_off        INTEGER,

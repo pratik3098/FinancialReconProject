@@ -21,7 +21,7 @@ async function connectToDb(){
 }
 
 
-async function createDefaultSchema(){
+async function createDefaultTables(){
     if(typeof sql !== 'undefined' && sql ){
            // Creating enums for facedrive
     await sql.query(queries.rideStatus)
@@ -55,15 +55,17 @@ async function readDataFromExcel(){
     let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
     res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+"\'"+res["UP Payment Status"]+"\'"+" , "+"\'"+res["Stripe Reserve Charge ID"]+"\'"+" , "+"\'"+res["Amount Charged ID"]+"\'"+" , "+res["UP Amount Charged"]+" , "+"\'"+res["Coupon Name"]+"\'"+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
     "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"]
-    //console.log(val)
+    console.log(val)
     
     Promise.resolve(sql.query(queries.facedriveInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
-  }) 
+
+  })  
+
 
 }
 
 
 connectToDb().catch(err=>{console.error(err)})
-//createDefaultSchema().catch(err=>{console.error(err)})
+//createDefaultTables().catch(err=>{console.error(err)})
 readDataFromExcel().catch(err=>{console.error(err)})
 

@@ -64,9 +64,6 @@ async function readDataFromExcel(){
   }) 
 
 
-    
-    //console.log(fcData)
-    //console.log (stripeData)
 }
 
 

@@ -2,7 +2,7 @@ exports.rideStatus= `CREATE TYPE rideStatus AS ENUM ('NOT_ACCEPTED', 'FAILED', '
 exports.rprideStatus= `CREATE TYPE rprideStatus AS ENUM ('PAID', 'FAILED' )`
 exports.uppaymentStatus = `CREATE TYPE uppaymentStatus AS ENUM ('PAID', 'FAILED' )`
 exports.couponAppliedStatus = `CREATE TYPE couponAppliedStatus AS ENUM ('succeeded')`
-exports.createTable= `CREATE TABLE facedrive ( 
+exports.createFacedriveTable= `CREATE TABLE facedrive ( 
     ride_id                   VARCHAR(35) PRIMARY KEY,
     ride_created              TIMESTAMP NOT NULL,
     ride_status               rideStatus NOT NULL,

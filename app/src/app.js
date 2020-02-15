@@ -25,7 +25,7 @@ async function connectToDb(){
     await sql.query(queries.couponAppliedStatus)
     
     // Creating the facedrive table
-    await sql.query(queries.createTable)
+    await sql.query(queries.createFacedriveTable)
     }
     catch(err){
         console.error(err)

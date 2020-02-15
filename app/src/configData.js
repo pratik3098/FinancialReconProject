@@ -1,6 +1,6 @@
 exports.dbConfig ={
     database: 'fin-rec-db',
-    user: 'facedrive',
+    user: 'facedrive-admin',
     password: 'somepass',
     port: 5432,
     //host: 'localhost'

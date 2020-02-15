@@ -1,5 +1,5 @@
 version: '3.1'
-# psql -U facedrive fin-rec-db
+# psql -U facedrive-admin fin-rec-db
 # \c fin-rec-db
 services:
 
@@ -9,7 +9,7 @@ services:
     tty: true
     restart: always
     environment:
-      POSTGRES_USER: facedrive
+      POSTGRES_USER: facedrive-admin
       POSTGRES_PASSWORD: somepass
       POSTGRES_DB: fin-rec-db
   

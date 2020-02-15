@@ -48,16 +48,14 @@ async function readDataFromExcel(){
     let fcData = xlsx.utils.sheet_to_json(fcFile.Sheets[fcFile.SheetNames[0]])
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     
-  /*  fcData.forEach(res=>{
-          await sql.query(`INSERT INTO facedrive (ride_id, ride_created, ride_status, ride_region, rp_client_pay, rp_facedrive_fee ,
+    fcData.forEach(res=>{
+          sql.query(`INSERT INTO facedrive (ride_id, ride_created, ride_status, ride_region, rp_client_pay, rp_facedrive_fee ,
             rp_ride_status, rp_toll_roads, rp_carbon_offset, rp_driver_earnings, rp_driver_tax, rp_client_tax, rp_base_fare, up_client_pay,
             up_tips, up_payment_status, stripe_reserve_charge_id , amount_charged_id, up_amount_charged, coupon_name , coupoun_dollar_off,coupon_percent_off,
-            coupon_applied_status, coupon_amount_charged) VALUES (`+ `);`)
+            coupon_applied_status, coupon_amount_charged) VALUES ();`).catch(err=>{console.error(err)})
     })
-    */
-    fcData.forEach(res=>{
-          console.log(res['Ride ID'])
-    })
+    
+    console.log(fcData[0])
     
   //  console.log(fcData)
     //console.log (stripeData)

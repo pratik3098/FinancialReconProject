@@ -1,9 +1,9 @@
-exports.rideStatus= `CREATE TYPE  rideStatus AS ENUM ('NOT_ACCEPTED', 'FAILED', 'FINISHED', 'CANCELLED_BY_DRIVER', 'CANCELLED_REQUEST' )`
-exports.rprideStatus= `CREATE TYPE  rprideStatus AS ENUM ('PAID', 'FAILED' )`
-exports.uppaymentStatus = `CREATE TYPE  uppaymentStatus AS ENUM ('PAID', 'FAILED' )`
+exports.rideStatus= `CREATE TYPE  rideStatus AS ENUM ('NOT_ACCEPTED','NO_ACCEPT', 'FAILED', 'FINISHED', 'CANCELLED_BY_DRIVER', 'CANCELLED_REQUEST', 'ON_THE_WAY','REQUESTED','STARTED','CANCELLED_BY_CLIENT' )`
+exports.rprideStatus= `CREATE TYPE  rprideStatus AS ENUM ('PAID', 'FAILED', 'READY_TO_PAY' ,'RESERVED')`
+exports.uppaymentStatus = `CREATE TYPE  uppaymentStatus AS ENUM ('PAID', 'FAILED','RESERVED', 'READY_TO_PAY')`
 exports.couponAppliedStatus = `CREATE TYPE  couponAppliedStatus AS ENUM ('succeeded')`
 exports.createFacedriveTable= `CREATE TABLE facedrive ( 
-    ride_id                   VARCHAR(35) PRIMARY KEY,
+    ride_id                   VARCHAR(36) PRIMARY KEY,
     ride_created              TIMESTAMP NOT NULL,
     ride_status               rideStatus NOT NULL,
     ride_region               VARCHAR(15) NOT NULL,
@@ -16,7 +16,9 @@ exports.createFacedriveTable= `CREATE TABLE facedrive (
     rp_driver_tax             INTEGER,
     rp_client_tax             INTEGER,
     rp_base_fare              INTEGER,
+    rp_facedrive_fee_perc     INTEGER,
     up_client_pay             INTEGER,
+    up_facedrive_fee          INTEGER,
     up_tips                   INTEGER,
     up_payment_status         uppaymentStatus,
     stripe_reserve_charge_id  VARCHAR(27) UNIQUE,

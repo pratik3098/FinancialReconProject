@@ -30,12 +30,14 @@ async function createDefaultSchema(){
     await sql.query(queries.couponAppliedStatus)
     // Creating the facedrive table
     await sql.query(queries.createFacedriveTable)  
-
+    console.log("facedrive table created successfully")
     // Creating enums for stripe
     await sql.query(queries.stripetxnType)
     await sql.query(queries.stripecurrencyType)
     // Creating the stripe table */
     await sql.query(queries.createStripeTable)
+
+    console.log("stripe table created successfully")
     }
     else
     console.error("Error: Database does not  exists")
@@ -49,25 +51,21 @@ async function readDataFromExcel(){
     let fcData = xlsx.utils.sheet_to_json(fcFile.Sheets[fcFile.SheetNames[0]])
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     
-   /* fcData.forEach(res=>{
-          sql.query(`INSERT INTO facedrive (ride_id, ride_created, ride_status, ride_region, rp_client_pay, rp_facedrive_fee ,
-            rp_ride_status, rp_toll_roads, rp_carbon_offset, rp_driver_earnings, rp_driver_tax, rp_client_tax, rp_base_fare, up_client_pay,
-            up_tips, up_payment_status, stripe_reserve_charge_id , amount_charged_id, up_amount_charged, coupon_name , coupoun_dollar_off,coupon_percent_off,
-            coupon_applied_status, coupon_amount_charged) VALUES ();`).catch(err=>{console.error(err)})
-    }) 
-*/
    fcData.forEach(res =>{
-    let val =res["Ride ID"]+" , "+moment(new Date(1900,0,res["Ride Created"])).format() +" , "+res["Ride Status"]+" , "+res["Ride Region"]+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+res["RP Ride Status"]+" , "+res["RP Toll Roads"]+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
-    res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+res["UP Payment Status"]+" , "+res["Stripe Reserve Charge ID"]+" , "+res["Amount Charged ID"]+" , "+res["UP Amount Charged"]+" , "+res["Coupon Name"]+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
-    res["Coupon Applied Status"]+" , " + res["Coupon Amount Charged"]
-    //await sql.query(`INSERT INTO facedrive (ride_id) VALUES ( ` + val + ` );`).catch(err=>{console.error(err)})
+    let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
+    res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+"\'"+res["UP Payment Status"]+"\'"+" , "+"\'"+res["Stripe Reserve Charge ID"]+"\'"+" , "+"\'"+res["Amount Charged ID"]+"\'"+" , "+res["UP Amount Charged"]+" , "+"\'"+res["Coupon Name"]+"\'"+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
+    "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"]
+    //console.log(val)
+    
+    Promise.resolve(sql.query(`INSERT INTO facedrive (ride_id, ride_created, ride_status, ride_region, rp_client_pay, rp_facedrive_fee ,
+        rp_ride_status, rp_toll_roads, rp_carbon_offset, rp_driver_earnings, rp_driver_tax, rp_client_tax, rp_base_fare,rp_facedrive_fee_perc, up_client_pay, up_facedrive_fee,
+        up_tips, up_payment_status, stripe_reserve_charge_id , amount_charged_id, up_amount_charged, coupon_name , coupoun_dollar_off,coupon_percent_off,
+        coupon_applied_status, coupon_amount_charged) VALUES (` + val + `);`).catch(err=>{console.error(err.message)})) 
   }) 
-  //new Date(1899,0,res["Ride Created"] -0.99999999 ) 
-    let res= fcData[136]
+
+
     
-    console.log(val)
-    
-  //  console.log(fcData)
+    //console.log(fcData)
     //console.log (stripeData)
 }
 

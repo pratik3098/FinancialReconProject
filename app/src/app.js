@@ -57,12 +57,8 @@ async function readDataFromExcel(){
     "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"]
     //console.log(val)
     
-    Promise.resolve(sql.query(`INSERT INTO facedrive (ride_id, ride_created, ride_status, ride_region, rp_client_pay, rp_facedrive_fee ,
-        rp_ride_status, rp_toll_roads, rp_carbon_offset, rp_driver_earnings, rp_driver_tax, rp_client_tax, rp_base_fare,rp_facedrive_fee_perc, up_client_pay, up_facedrive_fee,
-        up_tips, up_payment_status, stripe_reserve_charge_id , amount_charged_id, up_amount_charged, coupon_name , coupoun_dollar_off,coupon_percent_off,
-        coupon_applied_status, coupon_amount_charged) VALUES (` + val + `);`).catch(err=>{console.error(err.message)})) 
+    Promise.resolve(sql.query(queries.facedriveInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
   }) 
-
 
 }
 

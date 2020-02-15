@@ -2,6 +2,7 @@ exports.rideStatus= `CREATE TYPE  rideStatus AS ENUM ('NOT_ACCEPTED','NO_ACCEPT'
 exports.rprideStatus= `CREATE TYPE  rprideStatus AS ENUM ('PAID', 'FAILED', 'READY_TO_PAY' ,'RESERVED')`
 exports.uppaymentStatus = `CREATE TYPE  uppaymentStatus AS ENUM ('PAID', 'FAILED','RESERVED', 'READY_TO_PAY')`
 exports.couponAppliedStatus = `CREATE TYPE  couponAppliedStatus AS ENUM ('succeeded')`
+exports.close=`);`
 exports.createFacedriveTable= `CREATE TABLE facedrive ( 
     ride_id                   VARCHAR(36) PRIMARY KEY,
     ride_created              TIMESTAMP NOT NULL,
@@ -35,7 +36,7 @@ exports.facedriveInsertIntoAll= `INSERT INTO facedrive (ride_id, ride_created, r
     up_tips, up_payment_status, stripe_reserve_charge_id , amount_charged_id, up_amount_charged, coupon_name , coupoun_dollar_off,coupon_percent_off,
     coupon_applied_status, coupon_amount_charged) VALUES (`
 
-exports.close=`);`
+
 
 exports.stripetxnType=  `CREATE TYPE  stripetxnType AS ENUM ('refund','transfer','charge','reverse_transcation')`
 exports.stripecurrencyType=  `CREATE TYPE  stripecurrencyType AS ENUM ('cad','usd')`

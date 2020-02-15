@@ -11,9 +11,13 @@ const config= {
     host: '192.168.99.100'
 }
 
+const createTableQuery = "CREATE TABLE facedrive () "
+
 const sql=new Client(config)
 //const sql = postgres('postgres://'+config.user+':'+config.password+'@'+config.host+':'+config.port+'/'+config.database, config)
-sql.connect().then(()=>{ console.log(config.database +" connected successfuly @" +config.host+'/'+config.port)}).catch(err=>{console.error(err)})
+sql.connect().then(()=>{ console.log(config.database +" connected successfuly @" +config.host+'/'+config.port)})
+.then(()=>{sql.query("CREATE TABLE facedrive (ride_id VARCHAR(35) PRIMARY KEY)")}).catch(err=>{console.error(err)})
+.catch(err=>{console.error(err)})
 
 let fc_file= xlsx.readFile(path.resolve(__dirname,"./fc_data.xlsx"))
 let stripe_file = xlsx.readFile(path.resolve(__dirname,'./stripe_data.xlsx'))

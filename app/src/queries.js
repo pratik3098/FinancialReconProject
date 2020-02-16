@@ -38,18 +38,19 @@ exports.facedriveInsertIntoAll= `INSERT INTO facedrive (ride_id, ride_created, r
 
 
 
-exports.stripetxnType=  `CREATE TYPE  stripetxnType AS ENUM ('refund','transfer','charge','reverse_transcation')`
+exports.stripetxnType=  `CREATE TYPE  stripetxnType AS ENUM ('stripe_fee','refund','transfer','charge','reserve_transaction','transfer_refund', 'payout','adjustment')`
 exports.stripecurrencyType=  `CREATE TYPE  stripecurrencyType AS ENUM ('cad','usd')`
 
 exports.createStripeTable = `CREATE TABLE  stripe ( 
-    id                        VARCHAR(27) PRIMARY KEY,
+    id                        VARCHAR(28) PRIMARY KEY,
     type                      stripetxnType  NOT NULL,
-    source                    VARCHAR(27) NOT NULL,
-    amount                    NUMERIC (3, 2) NOT NULL  DEFAULT 0,
-    fee                       NUMERIC(3,2) NOT NULL DEFAULT 0,
-    net                       NUMERIC(3,2) NOT NULL DEFAULT 0,
+    source                    VARCHAR(28) NOT NULL,
+    amount                    DECIMAL (5, 2) NOT NULL  DEFAULT 0,
+    fee                       DECIMAL (5,2) NOT NULL DEFAULT 0,
+    net                       DECIMAL (5,2) NOT NULL DEFAULT 0,
     currency                  stripecurrencyType NOT NULL,
-    created                   TIMESTAMP NOT NULL,
-    availableOn               TIMESTAMP NOT NULL,
-    timezone                  VARCHAR(3) DEFAULT('UTC')
+    created_utc               TIMESTAMP NOT NULL,
+    availableOn_utc           TIMESTAMP NOT NULL
 );`
+
+exports.stripeInsertIntoAll = ` INSERT INTO stripe(id, type, source, amount, fee , net, currency, created_utc, availableOn_utc) VALUES (`

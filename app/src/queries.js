@@ -54,3 +54,9 @@ exports.createStripeTable = `CREATE TABLE  stripe (
 );`
 
 exports.stripeInsertIntoAll = ` INSERT INTO stripe(id, type, source, amount, fee , net, currency, created_utc, availableOn_utc) VALUES (`
+
+
+// Query Incomplete
+exports.dataWithInconsistency = `select * from facedrive as f, stripe as s where f.amount_charged_id = s.source and 
+        
+;`

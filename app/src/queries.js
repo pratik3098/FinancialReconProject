@@ -57,6 +57,4 @@ exports.stripeInsertIntoAll = ` INSERT INTO stripe(id, type, source, amount, fee
 
 
 // Query Incomplete
-exports.dataWithInconsistency = `select * from facedrive as f, stripe as s where f.amount_charged_id = s.source and 
-        
-;`
+exports.dataWithInconsistency = `select * from facedrive as f, stripe as s where f.amount_charged_id = s.source;`

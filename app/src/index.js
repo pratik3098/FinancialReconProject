@@ -23,7 +23,9 @@ app.get('/dataInconsistency',(req,res)=>{
     if (db.isConnected){
         db.dataWithInconsistency().then(dt=>{
         res.render('index',{val: Object.values(dt)})
-        }) 
+        }).catch(err=>{
+            res.render('index',{val: err.message})
+        })
     }
     else
      res.redirect('/')

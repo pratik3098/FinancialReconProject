@@ -19,7 +19,7 @@ app.get('/',(req,res)=>{
 })
 
 
-app.get('/dataInconsistency',(req,res)=>{
+app.get('/datawithinconsistency',(req,res)=>{
     if (db.isConnected){
         db.dataWithInconsistency().then(dt=>{
         res.render('index',{val: Object.values(dt)})

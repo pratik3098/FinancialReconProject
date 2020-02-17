@@ -56,5 +56,4 @@ exports.createStripeTable = `CREATE TABLE  stripe (
 exports.stripeInsertIntoAll = ` INSERT INTO stripe(id, type, source, amount, fee , net, currency, created_utc, availableOn_utc) VALUES (`
 
 
-// Query Incomplete
-exports.dataWithInconsistency = `select * from (select ride_id from facedrive, stripe where stripe.source = facedrive.amount_charged_id ) as Id,(select amount from stripe, facedrive where stripe.source = facedrive.amount_charged_id and stripe.amount != facedrive.up_amount_charged) as Amount, (select fee from stripe, facedrive where stripe.source = facedrive.amount_charged_id and stripe.fee != facedrive.up_facedrive_fee) as Fee;`
+exports.dataWithInconsistency = `select ride_id, amount_charged_id, fee, up_facedrive_fee,  amount, up_amount_charged  from facedrive join stripe on (stripe.source = facedrive.amount_charged_id and (stripe.amount <> facedrive.up_amount_charged or  stripe.fee <> facedrive.up_facedrive_fee));`

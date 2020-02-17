@@ -25,7 +25,7 @@ app.get('/datawithinconsistency',(req,res)=>{
         let result=[]
         dt.rows.forEach(row=>{result.push(Object.values(row))})
         //resolve(result)
-        res.render('index',{val: result})
+        res.render('database',{val: result})
         }).catch(err=>{
             res.render('index',{val: err.message})
         })

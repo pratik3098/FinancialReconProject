@@ -80,13 +80,13 @@ exports.dataWithInconsistency= async function(){
 
 
 this.connectToDb().catch(err=>{console.error(err.message)})
-//createDefaultTables().catch(err=>{console.error(err.message)})
-//readFCDataFromExcel().catch(err=>{console.error(err.message)})
-//readSTDataFromExcel().catch(err=>{console.error(err.message)})
-this.dataWithInconsistency().then(res=>{
+//this.createDefaultTables().catch(err=>{console.error(err.message)})
+this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
+this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
+/*this.dataWithInconsistency().then(res=>{
     res.rows.forEach(row=>{console.log(row)})
 
     //console.table(res.rows);
-})
+}) */
 
 

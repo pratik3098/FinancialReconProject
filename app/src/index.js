@@ -22,7 +22,10 @@ app.get('/',(req,res)=>{
 app.get('/datawithinconsistency',(req,res)=>{
     if (db.isConnected){
         db.dataWithInconsistency().then(dt=>{
-        res.render('index',{val: Object.values(dt)})
+        let result=[]
+        dt.rows.forEach(row=>{result.push(Object.values(row))})
+        //resolve(result)
+        res.render('index',{val: result})
         }).catch(err=>{
             res.render('index',{val: err.message})
         })

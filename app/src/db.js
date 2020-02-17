@@ -83,8 +83,8 @@ this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
-this.dataWithInconsistency().then(res=>{
+/*this.dataWithInconsistency().then(res=>{
     res.rows.forEach(row=>{console.log(row)})
 }) 
-
+*/
 

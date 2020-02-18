@@ -57,3 +57,17 @@ exports.stripeInsertIntoAll = ` INSERT INTO stripe(id, type, source, amount, fee
 
 
 exports.dataWithInconsistency = `select ride_id, amount_charged_id, fee, up_facedrive_fee,  amount, up_amount_charged  from facedrive join stripe on (stripe.source = facedrive.amount_charged_id and (stripe.amount <> facedrive.up_amount_charged or  stripe.fee <> facedrive.up_facedrive_fee));`
+
+
+exports.disrepencyStatus= `CREATE TYPE  disrepencyStatus AS ENUM ('new', 'reconcile rejected'); `
+exports.disrepencyDescription = `CREATE TYPE disrepencyDescription As ENUM ('no disrepency', 'amount mis-match', 'exists in App Only', 'exits in Stripe Only') ;`
+exports.createDisrepencyTable = ` CREATE TABLE disrepency(
+    Status             disrepencyStatus NOT NULL,
+    Description        disrepencyDescription NOT NULL,
+    Stripe_Amount      DECIMAL (5,2) NOT NULL DEFAULT 0,
+    FD_Amount          DECIMAL (5,2) NOT NULL DEFAULT 0,
+    Desrepency_Amount  DECIMAL (5,2) NOT NULL DEFAULT 0,
+    Date               TIMESTAMP NOT NULL,
+);
+`
+exports.maxDate= `SELECT max (Date) From disrepency;`

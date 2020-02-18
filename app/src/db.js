@@ -4,7 +4,6 @@ const path =require('path')
 const moment= require('moment')
 const config =require('./configData')
 const queries = require('./queries')
-const dockerSetup= require('./defaultContainerSetup')
 let sql
 exports.isConnected = false
 
@@ -40,6 +39,14 @@ exports.createDefaultTables=async function(){
     await sql.query(queries.createStripeTable)
 
     console.log("stripe table created successfully")
+
+
+    // Creating disrepency table 
+    await sql.query(queries.disrepencyStatus)
+    await sql.query(queries.disrepencyDescription)
+    await sql.query(queries.createDisrepencyTable)
+    console.log("disrepency table created successfully")
+
     }
     else
     console.error("Error: Database does not  exists")
@@ -77,25 +84,16 @@ exports.dataWithInconsistency= async function(){
     let result = await sql.query(queries.dataWithInconsistency)
     return result;
 }
-
-if(dockerSetup.isContainerRunning()){
-    this.connectToDb().catch(err=>{console.error(err.message)})
+exports.maxDate=async function(){
+    let result = await sql.query(quieries.maxDate)
+    return result
 }
-else
- {
-     dockerSetup.runContainer().then(res=>{
-         console.log(res)
-     }).catch(err=>{console.error(err.message)})
-     .then(this.createDefaultTables().catch(err=>{console.error(err.message)}))
-     .then(this.readFCDataFromExcel().catch(err=>{console.error(err.message)}))
-     .then(this.readFCDataFromExcel().catch(err=>{console.error(err.message)}))
-
- }
 
 
-this.createDefaultTables().catch(err=>{console.error(err.message)})
-//this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
-//this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
+this.connectToDb().catch(err=>{console.error(err.message)})
+//this.createDefaultTables().catch(err=>{console.error(err.message)})
+this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
+this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 /*this.dataWithInconsistency().then(res=>{
     res.rows.forEach(row=>{console.log(row)})
 }) 

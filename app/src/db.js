@@ -4,6 +4,7 @@ const path =require('path')
 const moment= require('moment')
 const config =require('./configData')
 const queries = require('./queries')
+const dockerSetup= require('./defaultContainerSetup')
 let sql
 exports.isConnected = false
 
@@ -77,10 +78,22 @@ exports.dataWithInconsistency= async function(){
     return result;
 }
 
+if(dockerSetup.isContainerRunning()){
+    this.connectToDb().catch(err=>{console.error(err.message)})
+}
+else
+ {
+     dockerSetup.runContainer().then(res=>{
+         console.log(res)
+     }).catch(err=>{console.error(err.message)})
+     .then(this.createDefaultTables().catch(err=>{console.error(err.message)}))
+     .then(this.readFCDataFromExcel().catch(err=>{console.error(err.message)}))
+     .then(this.readFCDataFromExcel().catch(err=>{console.error(err.message)}))
+
+ }
 
 
-this.connectToDb().catch(err=>{console.error(err.message)})
-//this.createDefaultTables().catch(err=>{console.error(err.message)})
+this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 /*this.dataWithInconsistency().then(res=>{

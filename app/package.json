@@ -11,7 +11,9 @@
     "postgres": "^1.0.2",
     "xlsx": "^0.15.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "docker-compose": "^0.23.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -30,9 +30,15 @@ function App() {
 
 function DbApp(){
   const[currentDate, setCurrentDate] = React.useState(moment(Date.now()).format())
-  const[startDate, setStartDate] =React.useState(moment(Date.now() - 1).format())
-  const[endDate, setEndDate] = React.useState(moment(Date.now()).format())
+  const[endDate, setEndDate] = React.useState(visibleDate(moment(Date.now()).format()))
+  //currentDate.substring(0,10)+"T" + currentDate.substring(11,16)
+  const[startDate, setStartDate] = React.useState(visibleDate(moment(Date.now()).format()))
+  
+  function visibleDate(dt){
+     return (dt.substring(0,10)+"T" + dt.substring(11,16))
+  }
   const getDataFromDb= ()=>{
+
   }
 
   const onClickSetStart=(event)=>{
@@ -43,10 +49,11 @@ function DbApp(){
    setEndDate(event.target.value)
   }
 
-  React.useEffect(()=>{},[startDate, endDate])
+  React.useEffect(()=>{
+
+  },[startDate, endDate])
    return(
      <div>
-   
     <Grid container direction="column" justify="center" alignItems="center">
     <Box m={1} />
       <Typography>FaceDrive: App vs. Stripe Reconciliation</Typography>
@@ -56,6 +63,7 @@ function DbApp(){
       </Box>
       <box m={3}>
       <Typography>Identify Desrepencies: </Typography> 
+      <Typography>Start Date: {currentDate} </Typography> 
       </box>
       <div>
       <TextField  id="start-datetime" label="Start Date" type="datetime-local" defaultValue={startDate} onClick={setStartDate}> </TextField>
@@ -63,10 +71,73 @@ function DbApp(){
       <TextField  id="end-datetime" label="End Date" type="datetime-local" defaultValue={endDate} onClick={setEndDate}> </TextField> 
       </box>
       </div>
-
+      <div>
+      <TableOutput> </TableOutput>
+      </div>
     </Grid>
     </div>
+    
    )
 }
 
+function TableOutput(){
+  const useStyles = makeStyles(theme => ({
+    root: {
+      '& .MuiTextField-root': {
+        margin: theme.spacing(1),
+        width: 200,
+      },
+    },
+  }));
+  function visibleDate(dt){
+    return (dt.substring(0,10)+"T" + dt.substring(11,16))
+ }
+
+      const[rows,setRows]= React.useState([{
+      Discrepency_ID : "0xoof", 
+      Stripe_ID: "txb_999",
+      Status : 'new', 
+      disrepencyStatus: 'amount mis-match', 
+      Stripe_Amount : 100,
+      FD_Amount: 95,
+      Desrepency_Amount: 5,
+       Date:   visibleDate(moment(Date.now()).format())    }])
+      /* db.dataWithDiscrepency().then(res=>{
+        setRows(res)
+      })
+      */
+  const classes = useStyles();
+ return (<TableContainer component={Paper}>
+      <Table className={classes.table} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Discrepency ID</TableCell>
+            <TableCell align="right">Stripe Charge ID</TableCell>
+            <TableCell align="right">Status</TableCell>
+            <TableCell align="right">Description</TableCell>
+            <TableCell align="right">Amount Stripe</TableCell>
+            <TableCell align="right">Amount FD</TableCell>
+            <TableCell align="right">Amount Discrepency</TableCell>
+            <TableCell align="right">Date</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map(row => (
+            <TableRow key={row.Discrepency_ID}>
+              <TableCell component="th" scope="row">
+                {row.Discrepency_ID}
+              </TableCell>
+              <TableCell align="right">{row.Stripe_ID}</TableCell>
+              <TableCell align="right">{row.Status}</TableCell>
+              <TableCell align="right">{row.disrepencyStatus}</TableCell>
+              <TableCell align="right">{row.Stripe_Amount}</TableCell>
+              <TableCell align="right">{row.FD_Amount}</TableCell>
+              <TableCell align="right">{row.Desrepency_Amount}</TableCell>
+              <TableCell align="right">{row.Date}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>)
+}
 export default App;

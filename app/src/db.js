@@ -84,18 +84,22 @@ exports.dataWithInconsistency= async function(){
     let result = await sql.query(queries.dataWithInconsistency)
     return result;
 }
-exports.maxDate=async function(){
-    let result = await sql.query(quieries.maxDate)
-    return result
+exports.getMaxDate=async function(){
+    //let result = await sql.query(queries.maxDate)
+    return result.rows[0]["max"]
 }
+
+
 
 
 this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
-this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
-this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
+//this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
+//this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 /*this.dataWithInconsistency().then(res=>{
     res.rows.forEach(row=>{console.log(row)})
-}) 
-*/
+}) */
+
+this.maxDate().then(res=>{console.log(res)})
+
 

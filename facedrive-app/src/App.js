@@ -124,9 +124,7 @@ function TableOutput(){
         <TableBody>
           {rows.map(row => (
             <TableRow key={row.Discrepency_ID}>
-              <TableCell component="th" scope="row">
-                {row.Discrepency_ID}
-              </TableCell>
+              <TableCell component="th" scope="row">  {row.Discrepency_ID} </TableCell>
               <TableCell align="right">{row.Stripe_ID}</TableCell>
               <TableCell align="right">{row.Status}</TableCell>
               <TableCell align="right">{row.disrepencyStatus}</TableCell>

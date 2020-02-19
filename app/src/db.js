@@ -58,12 +58,10 @@ exports.readFCDataFromExcel= async function(){
     // JSON Arrays of the sheet data
     let fcData = xlsx.utils.sheet_to_json(fcFile.Sheets[fcFile.SheetNames[0]])
    fcData.forEach(res =>{
-   /* let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
+   let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
     res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+"\'"+res["UP Payment Status"]+"\'"+" , "+"\'"+res["Stripe Reserve Charge ID"]+"\'"+" , "+"\'"+res["Amount Charged ID"]+"\'"+" , "+res["UP Amount Charged"]+" , "+"\'"+res["Coupon Name"]+"\'"+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
-    "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"] */
-    let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
-    res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+"\'"+res["UP Payment Status"]+"\'"+" , "+"\'"+res["Stripe Reserve Charge ID"]+"\'"+" , "+"\'"+res["Amount Charged ID"]+"\'" +" , "+'CAST ( '+res["UP Amount Charged"]+ ' AS FLOAT)'+" , "+"\'"+res["Coupon Name"]+"\'"+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
-    "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"]
+    "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"] 
+
     Promise.resolve(sql.query(queries.facedriveInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
   })  
 
@@ -83,25 +81,46 @@ exports.readSTDataFromExcel= async function(){
     console.log("Data inserted into Stripe successfully")
 }
 
-exports.dataWithInconsistency= async function(){
-    let result = await sql.query(queries.dataWithInconsistency)
-    return result;
+exports.dataWithInconsistency= async function(startDate, endDate){
+    let result = await sql.query(`select * from discrepency where date >= ` + startDate+ ` and date <= `+endDate+`;`).catch(err=>{console.log(err.message)})
+    return result.rows;
 }
+
+exports.updateNotes= async function(Id, notes){
+    Id ="\'"+Id+"\'"
+    notes ="\'"+notes+"\'"
+    await sql.query(`update disrepency SET notes = ` + notes + ` where ( Discrepency_ID = `+Id +queries.close).catch(err=>{console.log(err.message)})
+    
+}
+exports.updateStatus= async function(ID, status){
+    Id ="\'"+Id+"\'"
+    if(status == 'reconcile rejected')
+    await sql.query(queries.updateStatustorejected+ID+queries.close).catch(err=>{console.log(err.message)})
+    else
+    await sql.query(queries.updateStatutonew+ID+queries.close).catch(err=>{console.log(err.message)})
+
+}
+exports.getdetailByID= async function(id){
+   id ="\'"+id+"\'"
+   let result =await sql.query(queries.getdetailByID + id + `;`)
+   return result
+}
+
 exports.getMaxDate=async function(){
-    let result = await sql.query(queries.maxDate)
+    let result = await sql.query(queries.maxDate).catch(err=>{console.log(err.message)})
     return result.rows[0]["max"]
 }
 
 exports.getMinDate =async function(){
-    let result = await sql.query(queries.minDate)
+    let result = await sql.query(queries.minDate).catch(err=>{console.log(err.message)})
     return result.rows["min"]
 }
 
 
 this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
-this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
-this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
+//this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
+//this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 /*this.dataWithInconsistency().then(res=>{
     res.rows.forEach(row=>{console.log(row)})
 })*/ 
@@ -109,3 +128,4 @@ this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 //this.getMaxDate().then(res=>{console.log(res)})
 
 
+console.log('status')

@@ -24,7 +24,7 @@ exports.createFacedriveTable= `CREATE TABLE facedrive (
     up_payment_status         uppaymentStatus ,
     stripe_reserve_charge_id  VARCHAR(27),
     amount_charged_id         VARCHAR(27),
-    up_amount_charged         INTEGER,
+    up_amount_charged         INTEGER DEFAULT 0,
     coupon_name               VARCHAR(20),
     coupoun_dollar_off        INTEGER,
     coupon_percent_off        INTEGER,
@@ -45,9 +45,9 @@ exports.createStripeTable = `CREATE TABLE  stripe (
     id                        VARCHAR(28) PRIMARY KEY,
     type                      stripetxnType  NOT NULL,
     source                    VARCHAR(28) NOT NULL,
-    amount                    DECIMAL (5, 2) NOT NULL  DEFAULT 0,
-    fee                       DECIMAL (5,2) NOT NULL DEFAULT 0,
-    net                       DECIMAL (5,2) NOT NULL DEFAULT 0,
+    amount                    DECIMAL (5, 3) NOT NULL  DEFAULT 0,
+    fee                       DECIMAL (5,3) NOT NULL DEFAULT 0,
+    net                       DECIMAL (5,3) NOT NULL DEFAULT 0,
     currency                  stripecurrencyType NOT NULL,
     created_utc               TIMESTAMP NOT NULL,
     availableOn_utc           TIMESTAMP NOT NULL
@@ -63,11 +63,16 @@ exports.disrepencyStatus= `CREATE TYPE  disrepencyStatus AS ENUM ('new', 'reconc
 exports.disrepencyDescription = `CREATE TYPE disrepencyDescription As ENUM ('no disrepency', 'amount mis-match', 'exists in App Only', 'exits in Stripe Only');`
 exports.createDisrepencyTable = ` CREATE TABLE disrepency (
     Discrepency_ID     VARCHAR(36) PRIMARY KEY,
+    Stripe_Charge_ID   VARCHAR(27) NOT NULL,
     Status             disrepencyStatus NOT NULL,
     Description        disrepencyDescription NOT NULL,
-    Stripe_Amount      DECIMAL (5,2) NOT NULL DEFAULT 0,
-    FD_Amount          DECIMAL (5,2) NOT NULL DEFAULT 0,
-    Desrepency_Amount  DECIMAL (5,2) NOT NULL DEFAULT 0,
+    Stripe_Amount      DECIMAL (5,3) NOT NULL DEFAULT 0,
+    FD_Amount          DECIMAL (5,3) NOT NULL DEFAULT 0,
+    Desrepency_Amount  DECIMAL (5,3) NOT NULL DEFAULT 0,
     Date               TIMESTAMP NOT NULL
 );`
 exports.maxDate= `SELECT max (Date) From disrepency;`
+exports.minDate= `SELECT min (Date) From disrepency;`
+
+exports.disrepency =`select (facedrive.up_amount_charged- stripe.amount) as Dis from facedrive,stripe;`
+ insertInto =`Insert into disrepency ( Discrepency_ID, Stripe_Amount, FD_Amount, Desrepency_Amount) SELECT facedrive.ride_id, stripe.amount, facedrive.up_amount_charged, (facedrive.up_amount_charged - stripe.amount) as Dis from facedrive, stripe where (facedrive.up_amount_charged - stripe.amount)> 0;`

@@ -44,7 +44,7 @@ exports.createDefaultTables=async function(){
     // Creating disrepency table 
     await sql.query(queries.disrepencyStatus).catch(err=>{console.log(err.message)})
     await sql.query(queries.disrepencyDescription).catch(err=>{console.log(err.message)})
-   await sql.query(queries.createDisrepencyTable).catch(err=>{console.log(err.message)})
+    await sql.query(queries.createDisrepencyTable).catch(err=>{console.log(err.message)})
     console.log("disrepency table created successfully")
 
     }
@@ -58,8 +58,11 @@ exports.readFCDataFromExcel= async function(){
     // JSON Arrays of the sheet data
     let fcData = xlsx.utils.sheet_to_json(fcFile.Sheets[fcFile.SheetNames[0]])
    fcData.forEach(res =>{
-    let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
+   /* let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
     res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+"\'"+res["UP Payment Status"]+"\'"+" , "+"\'"+res["Stripe Reserve Charge ID"]+"\'"+" , "+"\'"+res["Amount Charged ID"]+"\'"+" , "+res["UP Amount Charged"]+" , "+"\'"+res["Coupon Name"]+"\'"+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
+    "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"] */
+    let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
+    res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+"\'"+res["UP Payment Status"]+"\'"+" , "+"\'"+res["Stripe Reserve Charge ID"]+"\'"+" , "+"\'"+res["Amount Charged ID"]+"\'" +" , "+'CAST ( '+res["UP Amount Charged"]+ ' AS FLOAT)'+" , "+"\'"+res["Coupon Name"]+"\'"+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
     "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"]
     Promise.resolve(sql.query(queries.facedriveInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
   })  
@@ -85,21 +88,24 @@ exports.dataWithInconsistency= async function(){
     return result;
 }
 exports.getMaxDate=async function(){
-    //let result = await sql.query(queries.maxDate)
+    let result = await sql.query(queries.maxDate)
     return result.rows[0]["max"]
 }
 
-
+exports.getMinDate =async function(){
+    let result = await sql.query(queries.minDate)
+    return result.rows["min"]
+}
 
 
 this.connectToDb().catch(err=>{console.error(err.message)})
-this.createDefaultTables().catch(err=>{console.error(err.message)})
-//this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
+//this.createDefaultTables().catch(err=>{console.error(err.message)})
+this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 /*this.dataWithInconsistency().then(res=>{
     res.rows.forEach(row=>{console.log(row)})
-}) */
+})*/ 
 
-//this.maxDate().then(res=>{console.log(res)})
+//this.getMaxDate().then(res=>{console.log(res)})
 
 

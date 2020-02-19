@@ -60,15 +60,14 @@ exports.dataWithInconsistency = `select ride_id, amount_charged_id, fee, up_face
 
 
 exports.disrepencyStatus= `CREATE TYPE  disrepencyStatus AS ENUM ('new', 'reconcile rejected'); `
-exports.disrepencyDescription = `CREATE TYPE disrepencyDescription As ENUM ('no disrepency', 'amount mis-match', 'exists in App Only', 'exits in Stripe Only') ;`
-exports.createDisrepencyTable = ` CREATE TABLE disrepency(
-    Discrepency_ID     VARCHAR(36) PRIMARY KEY;
+exports.disrepencyDescription = `CREATE TYPE disrepencyDescription As ENUM ('no disrepency', 'amount mis-match', 'exists in App Only', 'exits in Stripe Only');`
+exports.createDisrepencyTable = ` CREATE TABLE disrepency (
+    Discrepency_ID     VARCHAR(36) PRIMARY KEY,
     Status             disrepencyStatus NOT NULL,
     Description        disrepencyDescription NOT NULL,
     Stripe_Amount      DECIMAL (5,2) NOT NULL DEFAULT 0,
     FD_Amount          DECIMAL (5,2) NOT NULL DEFAULT 0,
     Desrepency_Amount  DECIMAL (5,2) NOT NULL DEFAULT 0,
-    Date               TIMESTAMP NOT NULL,
-);
-`
+    Date               TIMESTAMP NOT NULL
+);`
 exports.maxDate= `SELECT max (Date) From disrepency;`

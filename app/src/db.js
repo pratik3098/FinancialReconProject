@@ -25,26 +25,26 @@ exports.connectToDb =async function(){
 exports.createDefaultTables=async function(){
     if(typeof sql !== 'undefined' && sql ){
            // Creating enums for facedrive
-    await sql.query(queries.rideStatus)
-    await sql.query(queries.rprideStatus)
-    await sql.query(queries.uppaymentStatus)
-    await sql.query(queries.couponAppliedStatus)
+    await sql.query(queries.rideStatus).catch(err=>{console.log(err.message)})
+    await sql.query(queries.rprideStatus).catch(err=>{console.log(err.message)})
+    await sql.query(queries.uppaymentStatus).catch(err=>{console.log(err.message)})
+    await sql.query(queries.couponAppliedStatus).catch(err=>{console.log(err.message)})
     // Creating the facedrive table
-    await sql.query(queries.createFacedriveTable)  
+    await sql.query(queries.createFacedriveTable)  .catch(err=>{console.log(err.message)})
     console.log("facedrive table created successfully")
     // Creating enums for stripe
-    await sql.query(queries.stripetxnType)
-    await sql.query(queries.stripecurrencyType)
+    await sql.query(queries.stripetxnType).catch(err=>{console.log(err.message)})
+    await sql.query(queries.stripecurrencyType).catch(err=>{console.log(err.message)})
     // Creating the stripe table */
-    await sql.query(queries.createStripeTable)
+    await sql.query(queries.createStripeTable).catch(err=>{console.log(err.message)})
 
     console.log("stripe table created successfully")
 
 
     // Creating disrepency table 
-    await sql.query(queries.disrepencyStatus)
-    await sql.query(queries.disrepencyDescription)
-    await sql.query(queries.createDisrepencyTable)
+    await sql.query(queries.disrepencyStatus).catch(err=>{console.log(err.message)})
+    await sql.query(queries.disrepencyDescription).catch(err=>{console.log(err.message)})
+   await sql.query(queries.createDisrepencyTable).catch(err=>{console.log(err.message)})
     console.log("disrepency table created successfully")
 
     }
@@ -92,8 +92,8 @@ exports.getMaxDate=async function(){
 
 
 
-//this.connectToDb().catch(err=>{console.error(err.message)})
-//this.createDefaultTables().catch(err=>{console.error(err.message)})
+this.connectToDb().catch(err=>{console.error(err.message)})
+this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 /*this.dataWithInconsistency().then(res=>{

@@ -116,6 +116,9 @@ exports.getMinDate =async function(){
     return result.rows["min"]
 }
 
+async function isertDa(){
+    await sql.query(queries.InsertData).catch(err=>{console.log(err.message)})
+}
 
 this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
@@ -127,5 +130,4 @@ this.connectToDb().catch(err=>{console.error(err.message)})
 
 //this.getMaxDate().then(res=>{console.log(res)})
 
-
-console.log('status')
+//isertDa().catch(err=>{console.log(err)})

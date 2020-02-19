@@ -17,6 +17,7 @@ import Paper from '@material-ui/core/Paper';
 import moment from 'moment';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Popover from '@material-ui/core/Popover';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 //import {connectToDb, dataWithInconsistency, getMaxDate} from'./db.js';
 
@@ -53,6 +54,7 @@ function DbApp(){
   const onChangeSetEnd=(event)=>{
    setEndDate(event.target.value)
   }
+
   
   const useStyles = makeStyles(theme => ({
     root: {
@@ -75,9 +77,11 @@ function DbApp(){
       
   const classes = useStyles();
   React.useEffect(()=>{
-    /* dataWithInconsistency().then(res=>{
+    /* dataWithInconsistency(startDate, endDate).then(res=>{
          setRows(res)
       }) */
+    
+
   },[startDate, endDate])
 
   function MenuPopupState() {
@@ -101,6 +105,63 @@ function DbApp(){
       </PopupState>
     );
   }
+  function DataPoper(dt){
+    const useStyles = makeStyles(theme => ({
+      popover: {
+        pointerEvents: 'none',
+      },
+      paper: {
+        padding: theme.spacing(1),
+      },
+    }));
+    
+      const classes = useStyles();
+      const [anchorEl, setAnchorEl] = React.useState(null);
+    
+      const handlePopoverOpen = event => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handlePopoverClose = () => {
+        setAnchorEl(null);
+      };
+    
+      const open = Boolean(anchorEl);
+      return (
+        <div>
+          <Typography
+            aria-owns={open ? 'mouse-over-popover' : undefined}
+            aria-haspopup="true"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+          >
+            Hover is here
+          </Typography>
+          <Popover
+            id="mouse-over-popover"
+            className={classes.popover}
+            classes={{
+              paper: classes.paper,
+            }}
+            open={open}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            onClose={handlePopoverClose}
+            disableRestoreFocus
+          >
+            <Typography>Hello World!</Typography>
+          </Popover>
+        </div>
+      );
+  }
+  
    return(
      <div>
     <Grid container direction="column" justify="center" alignItems="center">
@@ -137,7 +198,7 @@ function DbApp(){
         <TableBody>
           {rows.map(row => (
             <TableRow key={row.Discrepency_ID}>
-              <TableCell component="th" scope="row">  {row.Discrepency_ID} </TableCell>
+              <TableCell component="th" scope="row"> <DataPoper dt="Hello W!"></DataPoper></TableCell>
               <TableCell align="center">{row.Stripe_ID}</TableCell>
               <TableCell align="center">{row.Status}</TableCell>
               <TableCell align="center">{row.Description}  <MenuPopupState></MenuPopupState></TableCell>
@@ -151,13 +212,13 @@ function DbApp(){
       </Table>
     </TableContainer>
       </div>
-      <statusInput></statusInput>
+    
     </Grid>
+
     </div>
    // <Typography>new start date: {startDate}</Typography>
    )
 }
-
 
 
 

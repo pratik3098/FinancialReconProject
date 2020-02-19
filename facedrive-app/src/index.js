@@ -1,35 +1,12 @@
-const path=require('path')
-const express= require('express')
-const bodyParser= require('body-parser');
-const db= require('./db.js')
-const config = require('./configData.js')
-const port = 8080
-const app = express()
-app.set('title','facedrive db')
-app.set('view engine','hbs')
-app.set('views',path.join(__dirname,"../views"))
-app.use(express.static("../views"))
-app.use(bodyParser.urlencoded({extended: false}))
-app.listen(port,()=>{ console.log("Server is running on port: "+port)})
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
 
-app.get('/',(req,res)=>{
-    db.connectToDb().then((res1)=>{
-        res.render('index',{val: res1})  
-    }).catch(err=>{ res.render('index',{val: err.message})})
-})
+ReactDOM.render(<App />, document.getElementById('root'));
 
-
-app.get('/datawithinconsistency',(req,res)=>{
-    if (db.isConnected){
-        db.dataWithInconsistency().then(dt=>{
-        let result=[]
-        dt.rows.forEach(row=>{result.push(Object.values(row))})
-        //resolve(result)
-        res.render('database',{val: result})
-        }).catch(err=>{
-            res.render('index',{val: err.message})
-        })
-    }
-    else
-     res.redirect('/')
-})
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();

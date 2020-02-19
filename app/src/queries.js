@@ -19,12 +19,12 @@ exports.createFacedriveTable= `CREATE TABLE facedrive (
     rp_base_fare              INTEGER,
     rp_facedrive_fee_perc     INTEGER,
     up_client_pay             INTEGER,
-    up_facedrive_fee          INTEGER,
+    up_facedrive_fee          NUMERIC,
     up_tips                   INTEGER,
     up_payment_status         uppaymentStatus ,
     stripe_reserve_charge_id  VARCHAR(28),
     amount_charged_id         VARCHAR(28),
-    up_amount_charged         INTEGER DEFAULT 0,
+    up_amount_charged         NUMERIC DEFAULT 0,
     coupon_name               VARCHAR(20),
     coupoun_dollar_off        INTEGER,
     coupon_percent_off        INTEGER,
@@ -45,18 +45,16 @@ exports.createStripeTable = `CREATE TABLE  stripe (
     id                        VARCHAR(28) PRIMARY KEY,
     type                      stripetxnType  NOT NULL,
     source                    VARCHAR(28) NOT NULL,
-    amount                    DECIMAL (5, 3) NOT NULL  DEFAULT 0,
-    fee                       DECIMAL (5,3) NOT NULL DEFAULT 0,
-    net                       DECIMAL (5,3) NOT NULL DEFAULT 0,
+    amount                    NUMERIC NOT NULL  DEFAULT 0,
+    fee                       NUMERIC NOT NULL DEFAULT 0,
+    net                       NUMERIC NOT NULL DEFAULT 0,
     currency                  stripecurrencyType NOT NULL,
     created_utc               TIMESTAMP NOT NULL,
     availableOn_utc           TIMESTAMP NOT NULL
 );`
 
 exports.stripeInsertIntoAll = ` INSERT INTO stripe(id, type, source, amount, fee , net, currency, created_utc, availableOn_utc) VALUES (`
-
-
-exports.dataWithInconsistency = `select ride_id, amount_charged_id, fee, up_facedrive_fee,  amount, up_amount_charged  from facedrive join stripe on (stripe.source = facedrive.amount_charged_id and (stripe.amount <> facedrive.up_amount_charged or  stripe.fee <> facedrive.up_facedrive_fee));`
+exports.dataWithInconsistencyOld= `select ride_id, amount_charged_id, fee, up_facedrive_fee,  amount, up_amount_charged  from facedrive join stripe on (stripe.source = facedrive.amount_charged_id and (stripe.amount <> facedrive.up_amount_charged or  stripe.fee <> facedrive.up_facedrive_fee));`
 
 
 exports.disrepencyStatus= `CREATE TYPE  disrepencyStatus AS ENUM ('new', 'reconcile rejected'); `
@@ -67,42 +65,22 @@ exports.createDisrepencyTable = ` CREATE TABLE disrepency (
     Status             disrepencyStatus DEFAULT 'new',
     Description        disrepencyDescription DEFAULT 'no disrepency',
     Notes              VARCHAR(100),
-    Stripe_Amount      DECIMAL (5,3) NOT NULL DEFAULT 0,
-    FD_Amount          DECIMAL (5,3) NOT NULL DEFAULT 0,
-    Desrepency_Amount  INTEGER NOT NULL DEFAULT 0,
+    Stripe_Amount      NUMERIC NOT NULL DEFAULT 0,
+    FD_Amount          NUMERIC NOT NULL DEFAULT 0,
+    Desrepency_Amount  NUMERIC NOT NULL DEFAULT 0,
     Date               TIMESTAMP NOT NULL
 );`
+
+
+
 exports.maxDate= `SELECT max (Date) From disrepency;`
 exports.minDate= `SELECT min (Date) From disrepency;`
-
 exports.disrepency =`select (facedrive.up_amount_charged- stripe.amount) as Dis from facedrive,stripe;`
-
-
- exports.disrepencyInsertInto=`insert into disrepency (Discrepency_ID, Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values('706f8f26-7a48-40bf-bd0a-5c1950c41f5','txn_1GBA7kEG0OJcP9w4Cx9F2t8','new', 'no disrepency', NULL, 12,14,2,'2008-01-01 00:00:01' );`
-
- exports.updateStatusDesc= `update disrepency SET Status='new', Description='amount mis-match' where (Desrepency_Amount > 0); `
-
-
- exports.updateStatustorejected=`update disrepency SET Status='reconcile rejected' where ( Discrepency_ID = `
- exports.updateStatutonew=`update disrepency SET Status='new' where ( Discrepency_ID = `
- exports.updateNotes=`update disrepency SET notes = ` + ` where ( Discrepency_ID = `
- exports.getdetailByID = `select * from disrepency where Discrepency_ID= `
- 
-/*
- 
-exports.fdAMOUNT = `select  (facedrive.up_amount_charged- stripe.amount) as dis  from facedrive,stripe where (facedrive.up_amount_charged - stripe.amount)>0 and facedrive.stripe_reserve_charge_id = stripe.source;`
-
-
-exports.updateFDAmount= `UPDATE disrepency SET Desrepency_Amount = (select (facedrive.up_amount_charged- stripe.amount) as dis from facedrive, stripe WHERE ((facedrive.stripe_reserve_charge_id = stripe.source) and  (stripe.source = disrepency.Stripe_Charge_ID ) and  (facedrive.up_amount_charged- stripe.amount) >0));`
-*/
-
-
-
-
-
-exports.disrepencyFromData =`create TABLE disrepency  As (select (facedrive.ride_id) as Discrepency_ID, (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (facedrive.up_amount_charged - stripe.amount ) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive,stripe where ((facedrive.up_amount_charged - stripe.amount ) > 0) and facedrive.stripe_reserve_charge_id = stripe.source );`
-
-exports.InsertData = `insert into disrepency (Discrepency_ID, Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) select (facedrive.ride_id) as Discrepency_ID, (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('no disrepency') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (facedrive.up_amount_charged - stripe.amount ) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive,stripe where ((facedrive.up_amount_charged - stripe.amount ) > 0) and facedrive.stripe_reserve_charge_id = stripe.source ) ;`
-
-
+exports.disrepencyInsertInto=`insert into disrepency (Discrepency_ID, Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values('706f8f26-7a48-40bf-bd0a-5c1950c41f5','txn_1GBA7kEG0OJcP9w4Cx9F2t8','new', 'no disrepency', NULL, 12,14,2,'2008-01-01 00:00:01' );`
+exports.updateStatusDesc= `update disrepency SET Status='new', Description='amount mis-match' where (Desrepency_Amount > 0); `
+exports.updateStatustorejected=`update disrepency SET Status='reconcile rejected' where ( Discrepency_ID = `
+exports.updateStatutonew=`update disrepency SET Status='new' where ( Discrepency_ID = `
+exports.updateNotes=`update disrepency SET notes = ` + ` where ( Discrepency_ID = `
+exports.getdetailByID = `select * from disrepency where Discrepency_ID= `
+exports.insertAllData = `insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) select  (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (CAST (facedrive.up_amount_charged - stripe.amount  as int)) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive,stripe where ((facedrive.up_amount_charged - stripe.amount ) > 0) and facedrive.stripe_reserve_charge_id = stripe.source;`
 exports.dataWithInconsistency = `select * from discrepency where date >= ` 

@@ -63,16 +63,18 @@ exports.disrepencyStatus= `CREATE TYPE  disrepencyStatus AS ENUM ('new', 'reconc
 exports.disrepencyDescription = `CREATE TYPE disrepencyDescription As ENUM ('no disrepency', 'amount mis-match', 'exists in App Only', 'exits in Stripe Only');`
 exports.createDisrepencyTable = ` CREATE TABLE disrepency (
     Discrepency_ID     VARCHAR(36) PRIMARY KEY,
-    Stripe_Charge_ID   VARCHAR(27) NOT NULL,
+    Stripe_Charge_ID   VARCHAR(28) NOT NULL,
     Status             disrepencyStatus NOT NULL,
     Description        disrepencyDescription NOT NULL,
     Stripe_Amount      DECIMAL (5,3) NOT NULL DEFAULT 0,
     FD_Amount          DECIMAL (5,3) NOT NULL DEFAULT 0,
-    Desrepency_Amount  DECIMAL (5,3) NOT NULL DEFAULT 0,
+    Desrepency_Amount  INTEGER NOT NULL DEFAULT 0,
     Date               TIMESTAMP NOT NULL
 );`
 exports.maxDate= `SELECT max (Date) From disrepency;`
 exports.minDate= `SELECT min (Date) From disrepency;`
 
 exports.disrepency =`select (facedrive.up_amount_charged- stripe.amount) as Dis from facedrive,stripe;`
- insertInto =`Insert into disrepency ( Discrepency_ID, Stripe_Amount, FD_Amount, Desrepency_Amount) SELECT facedrive.ride_id, stripe.amount, facedrive.up_amount_charged, (facedrive.up_amount_charged - stripe.amount) as Dis from facedrive, stripe where (facedrive.up_amount_charged - stripe.amount)> 0;`
+
+
+ exports.disrepencyInsertInto=`insert into disrepency (Discrepency_ID, Stripe_Charge_ID, Status, Description, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values('706f8f26-7a48-40bf-bd0a-5c1950c41f5','txn_1GBA7kEG0OJcP9w4Cx9F2t8','new', 'no disrepency', 12,14,2,'2008-01-01 00:00:01' );`

@@ -42,7 +42,7 @@ function DbApp(){
   const[currentDate, setCurrentDate] = React.useState(moment(Date.now()).format())
   const[endDate, setEndDate] = React.useState(visibleDate(moment(Date.now()).format()))
   const[startDate, setStartDate] = React.useState(visibleDate(moment(Date.now()).format()))
-  
+  const[action, setAction]=React.useState('');
   function visibleDate(dt){
      return (dt.substring(0,10)+"T" + dt.substring(11,16))
   }
@@ -69,6 +69,7 @@ function DbApp(){
       Discrepency_ID : "0xoof", 
       Stripe_ID: "txb_999",
       Status : 'new', 
+      Notes: 'Hello World!',
       Description: 'amount mis-match', 
       Stripe_Amount : 100,
       FD_Amount: 95,
@@ -85,9 +86,8 @@ function DbApp(){
   },[startDate, endDate])
 
   function MenuPopupState() {
-    const[action, setAction]=React.useState('');
     const onClickSetStatus=(event)=>{
-
+         setAction(event.target.value)
     }
     return (
       <PopupState variant="popover" popupId="demo-popup-menu">
@@ -97,70 +97,16 @@ function DbApp(){
               action
             </Button>
             <Menu {...bindMenu(popupState)}>
-              <MenuItem onClick={popupState.close}>Reconciled</MenuItem>
-              <MenuItem onClick={popupState.close }>Rejected</MenuItem>
+              <MenuItem onClick={popupState.close, onClickSetStatus}>Reconciled</MenuItem>
+              <MenuItem onClick={popupState.close, onClickSetStatus}>Rejected</MenuItem>
             </Menu>
           </React.Fragment>
         )}
       </PopupState>
     );
   }
-  function DataPoper(dt){
-    const useStyles = makeStyles(theme => ({
-      popover: {
-        pointerEvents: 'none',
-      },
-      paper: {
-        padding: theme.spacing(1),
-      },
-    }));
-    
-      const classes = useStyles();
-      const [anchorEl, setAnchorEl] = React.useState(null);
-    
-      const handlePopoverOpen = event => {
-        setAnchorEl(event.currentTarget);
-      };
-    
-      const handlePopoverClose = () => {
-        setAnchorEl(null);
-      };
-    
-      const open = Boolean(anchorEl);
-      return (
-        <div>
-          <Typography
-            aria-owns={open ? 'mouse-over-popover' : undefined}
-            aria-haspopup="true"
-            onMouseEnter={handlePopoverOpen}
-            onMouseLeave={handlePopoverClose}
-          >
-            Hover is here
-          </Typography>
-          <Popover
-            id="mouse-over-popover"
-            className={classes.popover}
-            classes={{
-              paper: classes.paper,
-            }}
-            open={open}
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            onClose={handlePopoverClose}
-            disableRestoreFocus
-          >
-            <Typography>Hello World!</Typography>
-          </Popover>
-        </div>
-      );
-  }
+  
+  
   
    return(
      <div>
@@ -198,7 +144,7 @@ function DbApp(){
         <TableBody>
           {rows.map(row => (
             <TableRow key={row.Discrepency_ID}>
-              <TableCell component="th" scope="row"> <DataPoper dt="Hello W!"></DataPoper></TableCell>
+              <TableCell component="th" scope="row"> <DataPoper dt={row}/></TableCell>
               <TableCell align="center">{row.Stripe_ID}</TableCell>
               <TableCell align="center">{row.Status}</TableCell>
               <TableCell align="center">{row.Description}  <MenuPopupState></MenuPopupState></TableCell>
@@ -221,5 +167,60 @@ function DbApp(){
 }
 
 
-
+export function DataPoper(dt){
+  const useStyles = makeStyles(theme => ({
+    popover: {
+      pointerEvents: 'none',
+    },
+    paper: {
+      padding: theme.spacing(1),
+    },
+  }));
+  
+    const classes = useStyles();
+    const [anchorEl, setAnchorEl] = React.useState(null);
+  
+    const handlePopoverOpen = event => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handlePopoverClose = () => {
+      setAnchorEl(null);
+    };
+  
+    const open = Boolean(anchorEl);
+    return (
+      <div>
+        <Typography
+          aria-owns={open ? 'mouse-over-popover' : undefined}
+          aria-haspopup="true"
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
+        >
+         {dt.Discrepency_ID}
+        </Typography>
+        <Popover
+          id="mouse-over-popover"
+          className={classes.popover}
+          classes={{
+            paper: classes.paper,
+          }}
+          open={open}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
+        >
+          <Typography>{dt.Notes}</Typography>
+        </Popover>
+      </div>
+    );
+}
 export default App;

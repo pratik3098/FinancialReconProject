@@ -116,8 +116,12 @@ exports.getMinDate =async function(){
     return result.rows["min"]
 }
 
-async function isertDa(){
-    await sql.query(queries.InsertData).catch(err=>{console.log(err.message)})
+exports.insertDataIntoDes=async function (){
+    await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
+    await sql.query(queries.updateDesFD).catch(err=>{console.log(err.message)})
+    await sql.query(queries.updateDesStripe).catch(err=>{console.log(err.message)})
+
+    console.log("Data inserted successfully in desrepency")
 }
 
 this.connectToDb().catch(err=>{console.error(err.message)})
@@ -130,4 +134,4 @@ this.connectToDb().catch(err=>{console.error(err.message)})
 
 //this.getMaxDate().then(res=>{console.log(res)})
 
-//isertDa().catch(err=>{console.log(err)})
+this.insertDataIntoDes().catch(err=>{console.log(err)})

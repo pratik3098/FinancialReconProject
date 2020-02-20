@@ -19,7 +19,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import {connectToDb, dataWithInconsistency, getMaxDate} from'./db.js';
+import {connectToDb, dataWithInconsistency, getMaxDate, getMinDate} from'./db.js';
 
 function App() {
   return (
@@ -34,9 +34,9 @@ function App() {
 
 function DbApp(){
   document.title = "Facedrive App"
-  //connectDb()
+  connectDb()
   async function connectDb(){
-   //await connectToDb()
+   await connectToDb()
     
   }
   const[currentDate, setCurrentDate] = React.useState(moment(Date.now()).format())

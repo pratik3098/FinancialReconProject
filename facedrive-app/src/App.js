@@ -19,7 +19,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-//import {connectToDb, dataWithInconsistency, getMaxDate} from'./db.js';
+import {connectToDb, dataWithInconsistency, getMaxDate} from'./db.js';
 
 function App() {
   return (

@@ -124,7 +124,7 @@ exports.insertDataIntoDes=async function (){
     console.log("Data inserted successfully in desrepency")
 }
 
-this.connectToDb().catch(err=>{console.error(err.message)})
+//this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
@@ -134,4 +134,4 @@ this.connectToDb().catch(err=>{console.error(err.message)})
 
 //this.getMaxDate().then(res=>{console.log(res)})
 
-this.insertDataIntoDes().catch(err=>{console.log(err)})
+//this.insertDataIntoDes().catch(err=>{console.log(err)})

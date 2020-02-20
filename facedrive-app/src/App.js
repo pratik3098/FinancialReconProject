@@ -144,7 +144,7 @@ function DbApp(){
         <TableBody>
           {rows.map(row => (
             <TableRow key={row.Discrepency_ID}>
-              <TableCell component="th" scope="row"> <DataPoper dt={row}/></TableCell>
+              <TableCell component="th" scope="row">{row.Discrepency_ID}</TableCell>
               <TableCell align="center">{row.Stripe_ID}</TableCell>
               <TableCell align="center">{row.Status}</TableCell>
               <TableCell align="center">{row.Description}  <MenuPopupState></MenuPopupState></TableCell>
@@ -158,11 +158,10 @@ function DbApp(){
       </Table>
     </TableContainer>
       </div>
-    
+      <DataPoper dt={rows[0]}/>
     </Grid>
 
     </div>
-   // <Typography>new start date: {startDate}</Typography>
    )
 }
 
@@ -197,7 +196,7 @@ export function DataPoper(dt){
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}
         >
-         {dt.Discrepency_ID}
+          {dt.Discrepency_ID}
         </Typography>
         <Popover
           id="mouse-over-popover"

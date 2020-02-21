@@ -19,7 +19,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import {connectToDb, dataWithInconsistency, getMaxDate,getMinDate,
+import {connectToDb, getMaxDate,getMinDate,
   dataWithInconsistency, updateNotes, updateStatus, getdetailByID,
 } from'./db.js';
 
@@ -36,18 +36,33 @@ function App() {
 
 function DbApp(){
   document.title = "Facedrive App"
-  //connectDb()
-  async function connectDb(){
-   //await connectToDb()
-    
-  }
+  connectToDb().catch(err=>{console.error(err.message)})
   const[currentDate, setCurrentDate] = React.useState(moment(Date.now()).format())
   const[endDate, setEndDate] = React.useState(visibleDate(moment(Date.now()).format()))
   const[startDate, setStartDate] = React.useState(visibleDate(moment(Date.now()).format()))
-  const[action, setAction]=React.useState('');
+  const[rows,setRows]= React.useState([{
+    Discrepency_ID : "0xoof", 
+    Stripe_ID: "txb_999",
+    Status : 'new', 
+    Notes: 'Hello World!',
+    Description: 'amount mis-match', 
+    Stripe_Amount : 100,
+    FD_Amount: 95,
+    Desrepency_Amount: 5,
+    Date:   visibleDate(moment(Date.now()).format())    }]) 
+    
+
+  getMaxDate().then(res=>{setCurrentDate(res); setEndDate(res)}).catch(err=>{console.error(err)})
+  getMinDate().then(res=>{setStartDate(res)}).catch(err=>{console.error(err)})
+  dataWithInconsistency(startDate,endDate).then(res=>{setRows(res)}).catch(err=>{console.error(err)})
+  
+ 
+  
   function visibleDate(dt){
      return (dt.substring(0,10)+"T" + dt.substring(11,16))
   }
+
+
 
   const onChangeSetStart=(event)=>{
       setStartDate(event.target.value)
@@ -67,30 +82,26 @@ function DbApp(){
     },
   }));
  
-      const[rows,setRows]= React.useState([{
-      Discrepency_ID : "0xoof", 
-      Stripe_ID: "txb_999",
-      Status : 'new', 
-      Notes: 'Hello World!',
-      Description: 'amount mis-match', 
-      Stripe_Amount : 100,
-      FD_Amount: 95,
-      Desrepency_Amount: 5,
-      Date:   visibleDate(moment(Date.now()).format())    }])
+
+     
+      const onChangeSetStatus=(key)=>{
+        // setAction(event.target.value)
+       //  updateStatus(key,event.target.value).catch(err=>{console.error(err)})
+       //  dataWithInconsistency(startDate,endDate).then(res=>{setRows(res)}).catch(err=>{console.error(err)})
+    }
       
   const classes = useStyles();
   React.useEffect(()=>{
-    /* dataWithInconsistency(startDate, endDate).then(res=>{
-         setRows(res)
-      }) */
-    
+
+      dataWithInconsistency(startDate,endDate).then(res=>{setRows(res)}).catch(err=>{console.error(err)})
+      console.log(rows)
 
   },[startDate, endDate])
 
+
+
   function MenuPopupState() {
-    const onClickSetStatus=(event)=>{
-         setAction(event.target.value)
-    }
+  
     return (
       <PopupState variant="popover" popupId="demo-popup-menu">
         {popupState => (
@@ -99,8 +110,8 @@ function DbApp(){
               action
             </Button>
             <Menu {...bindMenu(popupState)}>
-              <MenuItem onClick={popupState.close, onClickSetStatus}>Reconciled</MenuItem>
-              <MenuItem onClick={popupState.close, onClickSetStatus}>Rejected</MenuItem>
+              <MenuItem onClick={popupState.close}>Reconciled</MenuItem>
+              <MenuItem onClick={popupState.close}>Rejected</MenuItem>
             </Menu>
           </React.Fragment>
         )}
@@ -148,7 +159,7 @@ function DbApp(){
             <TableRow key={row.Discrepency_ID}>
               <TableCell component="th" scope="row">{row.Discrepency_ID}</TableCell>
               <TableCell align="center">{row.Stripe_ID}</TableCell>
-              <TableCell align="center">{row.Status}</TableCell>
+              <TableCell align="center" >{row.Status}</TableCell>
               <TableCell align="center">{row.Description}  <MenuPopupState></MenuPopupState></TableCell>
               <TableCell align="center">{row.Stripe_Amount}</TableCell>
               <TableCell align="center">{row.FD_Amount}</TableCell>

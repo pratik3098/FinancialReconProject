@@ -12,7 +12,7 @@ exports.connectToDb =async function(){
     const dbConfig= config.dbConfig
     let dbAddr = dbConfig.database +"@" +dbConfig.host+'/'+dbConfig.port
     sql = new Pool (dbConfig)
-    await sql.connect()
+    await sql.connect().catch(err=>{console.error(err.message)})
     this.isConnected =true
     console.log(dbAddr + " connected successfuly")
     return (dbAddr + " connected successfully")
@@ -82,8 +82,10 @@ exports.readSTDataFromExcel= async function(){
 }
 
 exports.dataWithInconsistency= async function(startDate, endDate){
-    let result = await sql.query(`select * from discrepency where date >= ` + startDate+ ` and date <= `+endDate+`;`).catch(err=>{console.log(err.message)})
-    return result.rows;
+    startDate=await this.dateFormat(startDate)
+    endDate=await this.dateFormat(endDate)
+    let result = await sql.query(`select * from disrepency where date >= '` + startDate+ `' and date <= '`+endDate+`';`).catch(err=>{console.log(err.message)})
+    return result.rows
 }
 
 exports.updateNotes= async function(Id, notes){
@@ -113,7 +115,7 @@ exports.getMaxDate=async function(){
 
 exports.getMinDate =async function(){
     let result = await sql.query(queries.minDate).catch(err=>{console.log(err.message)})
-    return result.rows["min"]
+    return result.rows[0]["min"]
 }
 
 exports.insertDataIntoDes=async function (){
@@ -124,14 +126,21 @@ exports.insertDataIntoDes=async function (){
     console.log("Data inserted successfully in desrepency")
 }
 
-//this.connectToDb().catch(err=>{console.error(err.message)})
+exports.dateFormat=async function(d){
+  
+  let r=d.slice(0,10)+' '+d.slice(11,19)
+  return r;
+}
+this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
-/*this.dataWithInconsistency().then(res=>{
-    res.rows.forEach(row=>{console.log(row)})
-})*/ 
-
-//this.getMaxDate().then(res=>{console.log(res)})
-
+//this.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(res=>{
+//    res.forEach(row=>{console.log(row)})
+//}).catch(err=>{console.error(err.message)}) 
+//this.getMaxDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})
+//2020-02-13T05:00:00.000Z
+//this.getMinDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})
+// 2020-02-12T05:00:00.000Z
 //this.insertDataIntoDes().catch(err=>{console.log(err)})
+//console.log(res)

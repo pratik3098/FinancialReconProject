@@ -10,6 +10,10 @@ app.set('view engine','hbs')
 app.set('views',path.join(__dirname,"../views"))
 app.use(express.static("../views"))
 app.use(bodyParser.urlencoded({extended: false}))
+app.use(function(req,res,next){
+    res.header("Access-Control-Allow-Origin","*")
+    res.header("Access-Control-Allow-Headers")
+})
 app.listen(port,()=>{ console.log("Server is running on port: "+port)})
 
 app.get('/',(req,res)=>{

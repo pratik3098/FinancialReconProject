@@ -20,7 +20,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import {connectToDb, getMaxDate,getMinDate,
-  dataWithInconsistency, updateNotes, updateStatus, getdetailByID,
+  dataWithInconsistency, updateNotes, updateStatus, getdetailByID, condateFormat
 } from'./db.js';
 
 function App() {
@@ -41,17 +41,23 @@ function DbApp(){
   const[endDate, setEndDate] = React.useState(visibleDate(moment(Date.now()).format()))
   const[startDate, setStartDate] = React.useState(visibleDate(moment(Date.now()).format()))
   const[rows,setRows]= React.useState([{
-    Discrepency_ID : "0xoof", 
-    Stripe_ID: "txb_999",
-    Status : 'new', 
-    Notes: 'Hello World!',
-    Description: 'amount mis-match', 
-    Stripe_Amount : 100,
-    FD_Amount: 95,
-    Desrepency_Amount: 5,
-    Date:   visibleDate(moment(Date.now()).format())    }]) 
-    
-
+    discrepency_id : "0xoof", 
+    stripe_charge_id: "txb_999",
+    status : 'new', 
+    notes: 'Hello World!',
+    description: 'amount mis-match', 
+    stripe_amount : 100,
+    fd_amount: 95,
+    desrepency_amount: 5,
+    date:   visibleDate(moment(Date.now()).format())    }]) 
+    rowf().catch(err=>{console.error(err.message)})
+  async function rowf(){
+   let r =await dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').catch(err=>{console.error(err.message)})
+   r = Array.from(r)
+   console.log(r)
+   setRows(r)
+  }
+  
   getMaxDate().then(res=>{setCurrentDate(res); setEndDate(res)}).catch(err=>{console.error(err)})
   getMinDate().then(res=>{setStartDate(res)}).catch(err=>{console.error(err)})
   dataWithInconsistency(startDate,endDate).then(res=>{setRows(res)}).catch(err=>{console.error(err)})
@@ -84,11 +90,6 @@ function DbApp(){
  
 
      
-      const onChangeSetStatus=(key)=>{
-        // setAction(event.target.value)
-       //  updateStatus(key,event.target.value).catch(err=>{console.error(err)})
-       //  dataWithInconsistency(startDate,endDate).then(res=>{setRows(res)}).catch(err=>{console.error(err)})
-    }
       
   const classes = useStyles();
   React.useEffect(()=>{
@@ -156,15 +157,15 @@ function DbApp(){
         </TableHead>
         <TableBody>
           {rows.map(row => (
-            <TableRow key={row.Discrepency_ID}>
-              <TableCell component="th" scope="row">{row.Discrepency_ID}</TableCell>
-              <TableCell align="center">{row.Stripe_ID}</TableCell>
-              <TableCell align="center" >{row.Status}</TableCell>
-              <TableCell align="center">{row.Description}  <MenuPopupState></MenuPopupState></TableCell>
-              <TableCell align="center">{row.Stripe_Amount}</TableCell>
-              <TableCell align="center">{row.FD_Amount}</TableCell>
-              <TableCell align="center">{row.Desrepency_Amount}</TableCell>
-              <TableCell align="center">{row.Date}</TableCell>
+            <TableRow key={row.discrepency_id}>
+              <TableCell component="th" scope="row">{row.discrepency_id}</TableCell>
+              <TableCell align="center">{row.stripe_charge_id}</TableCell>
+              <TableCell align="center" >{row.status} <MenuPopupState></MenuPopupState></TableCell>
+              <TableCell align="center">{row.description}  </TableCell>
+              <TableCell align="center">{row.stripe_amount}</TableCell>
+              <TableCell align="center">{row.fd_amount}</TableCell>
+              <TableCell align="center">{row.desrepency_amount}</TableCell>
+              <TableCell align="center">{row.date}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -209,7 +210,7 @@ export function DataPoper(dt){
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}
         >
-          {dt.Discrepency_ID}
+          {dt.discrepency_id}
         </Typography>
         <Popover
           id="mouse-over-popover"
@@ -230,7 +231,7 @@ export function DataPoper(dt){
           onClose={handlePopoverClose}
           disableRestoreFocus
         >
-          <Typography>{dt.Notes}</Typography>
+          <Typography>{dt.notes}</Typography>
         </Popover>
       </div>
     );

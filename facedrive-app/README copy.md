@@ -12,7 +12,7 @@ docker-compose -f postgres-db.yml up -d
 
 
 To Setup Docker-enviorment:
-chmod 777 * src/.docker-config.sh
+sudo chmod 777 * src/.docker-config.sh
 sudo ./docker-config.sh 
 log-out and log-in
 

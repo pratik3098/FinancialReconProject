@@ -96,10 +96,10 @@ exports.updateNotes= async function(Id, notes){
 }
 exports.updateStatus= async function(Id, status){
     Id ="\'"+Id+"\'"
-    if(status == 'reconcile rejected')
+    if(status == 'reconciled')
+    await sql.query(queries.updateStatutorec+Id+queries.close).catch(err=>{console.log(err.message)})
+    else if (status == 'rejected')
     await sql.query(queries.updateStatustorejected+Id+queries.close).catch(err=>{console.log(err.message)})
-    else
-    await sql.query(queries.updateStatutonew+Id+queries.close).catch(err=>{console.log(err.message)})
 
 }
 exports.getdetailByID= async function(id){
@@ -130,7 +130,7 @@ function condateFormat(d){
   let r=d.substring(0,10)+' '+d.substring(11,19)
   return r;
 }
-//this.connectToDb().catch(err=>{console.error(err.message)})
+this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
@@ -143,3 +143,5 @@ function condateFormat(d){
 // 2020-02-12T05:00:00.000Z
 //this.insertDataIntoDes().catch(err=>{console.log(err)})
 //console.log(res)
+
+this.updateStatus(1, 'reconciled').catch(err=>{console.log(err)})

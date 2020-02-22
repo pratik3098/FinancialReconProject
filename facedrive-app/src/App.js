@@ -14,7 +14,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import moment from 'moment';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
@@ -27,14 +26,14 @@ function App() {
 const[min,setMin]=React.useState('')
 fetch('http://localhost:8080/minDate').then(res=>{
   res.json().then(data=>{
-    console.log(data.data)
+  //  console.log(data.data)
      setMin(data.data)
   })
 }).catch(err=>{console.error(err.message)})
 
 fetch('http://localhost:8080/maxDate').then(res=>{
   res.json().then(data=>{
-    console.log(data.data)
+    //console.log(data.data)
      setMax(data.data)
   })
 }).catch(err=>{console.error(err.message)})
@@ -54,6 +53,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
     const[endDate, setEndDate] = React.useState(visibleDate(max))
     const[startDate, setStartDate] = React.useState(visibleDate(min))
     const[rows,setRows]= React.useState([{}]) 
+    const[status,setStatus]=React.useState('new')
     
    
   
@@ -63,7 +63,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
       }).then(res=>{
         res.json().then(data=>{
-          console.log(data)
+        //  console.log(data)
           setRows(data.data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
@@ -103,28 +103,66 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
       }).then(res=>{
         res.json().then(data=>{
-          console.log(data)
+         // console.log(data)
           setRows([{}])
           setRows(data.data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
     
-    },[startDate,endDate])
+    },[startDate,endDate,status])
+
+    //React.useEffect(()=>{},[status])
   
+   
   
-  
-    function MenuPopupState() {
+    function MenuPopupState(dt) {
+      const changeStatus= (event)=>{
+       
+        if(event.nativeEvent.target.outerText=='Reconcile'){
+          fetch('http://localhost:8080/dt1',{
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+        body: JSON.stringify({"id": dt , "status": 'reconciled'})
+      }).then(res=>{
+        res.json().then(data=>{
+          console.log(data)
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)})
+          setStatus('reconciled')
+          console.log('Status: reconciled')
+        }
+        else if(event.nativeEvent.target.outerText=='Reject'){
+      
+          fetch('http://localhost:8080/dt1',{
+            method: 'POST',
+            headers: new Headers({'Content-Type': 'application/json'}),
+            body: JSON.stringify({"id": dt , "status": 'rejected'})
+          }).then(res=>{
+            res.json().then(data=>{
+              console.log(data)
+            }).catch(err=>{console.error(err.message)})
+          }).catch(err=>{console.error(err.message)})
+          setStatus('rejected')
+          console.log('Status: rejected')
+        }
+        else{
+          setStatus('new')
+          console.log('Status: new')
+        }
+        console.log(dt)
+   
+       }
     
       return (
         <PopupState variant="popover" popupId="demo-popup-menu">
           {popupState => (
             <React.Fragment>
-              <Button variant="contained" color="primary" {...bindTrigger(popupState)}>
+              <Button variant="contained" color="primary" {...bindTrigger(popupState)} >
                 action
               </Button>
               <Menu {...bindMenu(popupState)}>
-                <MenuItem onClick={popupState.close}>Reconciled</MenuItem>
-                <MenuItem onClick={popupState.close}>Rejected</MenuItem>
+                <MenuItem onClick={popupState.close,changeStatus} defaultValue='Reconciled'>Reconcile</MenuItem>
+                <MenuItem onClick={popupState.close,changeStatus} defaultValue='Rejected'>Reject</MenuItem>
               </Menu>
             </React.Fragment>
           )}
@@ -133,7 +171,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
     }
     
     
-    
+   
      return(
        <div>
       <Grid container direction="column" justify="center" alignItems="center">
@@ -172,7 +210,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
               <TableRow key={row.discrepency_id}>
                 <TableCell component="th" scope="row">{row.discrepency_id}</TableCell>
                 <TableCell align="center">{row.stripe_charge_id}</TableCell>
-                <TableCell align="center" >{row.status} <MenuPopupState></MenuPopupState></TableCell>
+                <TableCell align="center" >{row.status} <MenuPopupState dt={row.discrepency_id} ></MenuPopupState></TableCell>
                 <TableCell align="center">{row.description}  </TableCell>
                 <TableCell align="center">{row.stripe_amount}</TableCell>
                 <TableCell align="center">{row.fd_amount}</TableCell>

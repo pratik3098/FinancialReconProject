@@ -125,9 +125,9 @@ exports.insertDataIntoDes= async function (){
     console.log("Data inserted successfully in desrepency")
 }
 
-async function condateFormat(d){
+function condateFormat(d){
   
-  let r=d.slice(0,10)+' '+d.slice(11,19)
+  let r=d.substring(0,10)+' '+d.substring(11,19)
   return r;
 }
 //this.connectToDb().catch(err=>{console.error(err.message)})

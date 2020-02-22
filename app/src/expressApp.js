@@ -28,10 +28,11 @@ app.get('/',(req,res)=>{
 
 app.post('/datawithinconsistency',(req,res)=>{
     if (db.isConnected){
+        console.log("Body is: "+req.body)
         db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
           
-      // db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
-         console.log(result)
+       //db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
+        
         return res.status(200).send({
             success: 'true',
             data: result
@@ -67,7 +68,7 @@ app.get('/maxDate',(req,res)=>{
 app.post('/updateNotes',(req,res)=>{
     db.updateNotes(req.body.id,req.body.notes).then(res1=>{
         let result="Notes updated for id: "+req.body.id
-        console.log(result)
+    
         return res.status(200).send({
             success: 'true',
             data: result

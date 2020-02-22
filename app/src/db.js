@@ -82,8 +82,8 @@ exports.readSTDataFromExcel= async function(){
 }
 
 exports.dataWithInconsistency= async function(startDate, endDate){
-    startDate=await condateFormat(startDate).catch(err=>{console.log(err.message)})
-    endDate=await condateFormat(endDate).catch(err=>{console.log(err.message)})
+   // startDate=await condateFormat(startDate).catch(err=>{console.log(err.message)})
+   // endDate=await condateFormat(endDate).catch(err=>{console.log(err.message)})
     let result = await sql.query(`select * from disrepency where date >= '` + startDate+ `' and date <= '`+endDate+`';`).catch(err=>{console.log(err.message)})
     return result.rows
 }

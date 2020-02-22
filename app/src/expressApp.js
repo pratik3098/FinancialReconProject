@@ -10,7 +10,8 @@ app.set('title','facedrive db')
 app.set('view engine','hbs')
 app.set('views',path.join(__dirname,"../views"))
 app.use(express.static("../views"))
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use(function(req,res,next){
     res.header("Access-Control-Allow-Origin","*")
@@ -26,24 +27,33 @@ app.get('/',(req,res)=>{
 })
 
 
-app.post('/datawithinconsistency',(req,res)=>{
+app.post('/dt1',(req,res)=>{
     if (db.isConnected){
-        console.log("Body is: "+req.body)
-        db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
+        console.log("Body is: "+Object.values(req.body))
+ 
+       // db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
           
-       //db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
-        
+       db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
+       console.log(Object.keys(req.body))
         return res.status(200).send({
             success: 'true',
             data: result
         })
-        }).catch(err=>{
-            res.render('db',{val: err.message})
+        
+            }).catch(err=>{
+
+            return res.status(404).send({
+                success: 'false',
+                data: err.message
+            })
+        
         })
     }
     else
      res.redirect('/')
 })
+
+
 
 app.get('/minDate',(req,res)=>{
     db.getMinDate().then(res1=>{
@@ -52,7 +62,10 @@ app.get('/minDate',(req,res)=>{
             data: res1
         })
     }).catch(err=>{console.error(err.message)
-    res.redirect('')})
+        return res.status(404).send({
+            success: 'false',
+            data: err.message
+        })})
 })
 
 app.get('/maxDate',(req,res)=>{
@@ -62,7 +75,10 @@ app.get('/maxDate',(req,res)=>{
             data: res1
         })
     }).catch(err=>{console.error(err.message)
-         res.redirect('/')})
+        return res.status(404).send({
+            success: 'false',
+            data: err.message
+        })})
 })
 
 app.post('/updateNotes',(req,res)=>{
@@ -74,7 +90,10 @@ app.post('/updateNotes',(req,res)=>{
             data: result
         })
     }).catch(err=>{console.error(err.message)
-        res.redirect('/')})
+        return res.status(404).send({
+            success: 'false',
+            data: err.message
+        })})
 })
 
 app.post('/updateStatus',(req,res)=>{

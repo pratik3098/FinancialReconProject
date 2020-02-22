@@ -18,6 +18,7 @@ import moment from 'moment';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
+import fetch from 'node-fetch';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 
@@ -56,13 +57,13 @@ fetch('http://localhost:8080/maxDate').then(res=>{
     
    
   
-      fetch('http://localhost:8080/datawithinconsistency',{
+      fetch('http://localhost:8080/dt1',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"startDate": min, "endDate": max})
+        body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
       }).then(res=>{
         res.json().then(data=>{
-           console.log(data)
+          console.log(data)
           setRows(data.data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
@@ -96,16 +97,17 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         
     const classes = useStyles();
     React.useEffect(()=>{
-     /*  fetch(new Request('http://localhost:8080/datawithinconsistency',{
+      fetch('http://localhost:8080/dt1',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"startDate": startDate, "endDate": endDate})
-      })).then(res=>{
+        body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
+      }).then(res=>{
         res.json().then(data=>{
-         setRows(data.data)
+          console.log(data)
+          setRows([{}])
+          setRows(data.data)
         }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)}) 
-*/
+      }).catch(err=>{console.error(err.message)})
     
     },[startDate,endDate])
   
@@ -145,9 +147,9 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         <Typography>Identify Desrepencies: </Typography> 
         </box>
         <div>
-        <TextField  id="start-datetime" label="Start Date" type="datetime-local" defaultValue={startDate} > </TextField>
+        <TextField  id="start-datetime" label="Start Date" type="datetime-local" defaultValue={startDate} onChange={onChangeSetStart} > </TextField>
         <box m={1}>
-        <TextField  id="end-datetime" label="End Date" type="datetime-local" defaultValue={endDate} > </TextField> 
+        <TextField  id="end-datetime" label="End Date" type="datetime-local" defaultValue={endDate} onChange={onChangeSetEnd}> </TextField> 
         </box>
         </div>
         <div>
@@ -182,7 +184,6 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         </Table>
       </TableContainer>
         </div>
-        <DataPoper dt={rows[0]}/>
       </Grid>
   
       </div>

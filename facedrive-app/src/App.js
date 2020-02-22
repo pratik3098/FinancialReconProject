@@ -47,15 +47,28 @@ function DbApp(){
     desrepency_amount: 5,
     date:   visibleDate(moment(Date.now()).format())    }]) 
 
-    let request1= new Request('http://localhost:8080/datawithinconsistency',{
+    fetch('http://localhost:8080/minDate').then(res=>{
+      res.json().then(data=>{
+        console.log(data.data)
+         setStartDate(data.data)
+      })
+    }).catch(err=>{console.error(err.message)})
+   
+    fetch('http://localhost:8080/maxDate').then(res=>{
+      res.json().then(data=>{
+        console.log(data.data)
+         setCurrentDate(data.data)
+         setStartDate(data.data)
+      })
+    }).catch(err=>{console.error(err.message)})
+
+    fetch('http://localhost:8080/datawithinconsistency',{
       method: 'POST',
       headers: new Headers({'Content-Type': 'application/json'}),
       body: JSON.stringify({startDate: startDate, endDate: endDate})
-    })
-    fetch('http://localhost:8080/datawithinconsistency').then(res=>{
-      res.text().then(data=>{
-        console.log(data)
-        //setRows(data.data)
+    }).then(res=>{
+      res.json().then(data=>{
+       // setRows(data.data)
       }).catch(err=>{console.error(err.message)})
     }).catch(err=>{console.error(err.message)})
   
@@ -88,16 +101,15 @@ function DbApp(){
       
   const classes = useStyles();
   React.useEffect(()=>{
-    fetch(new Request('http://localhost:8080/datawithinconsistency',{
+     fetch(new Request('http://localhost:8080/datawithinconsistency',{
       method: 'POST',
       headers: new Headers({'Content-Type': 'application/json'}),
       body: JSON.stringify({startDate: startDate, endDate: endDate})
     })).then(res=>{
-      res.text().then(data=>{
-        console.log(data)
-       // setRows(data)
+      res.json().then(data=>{
+       //setRows(data)
       }).catch(err=>{console.error(err.message)})
-    }).catch(err=>{console.error(err.message)})
+    }).catch(err=>{console.error(err.message)}) 
   
   },[startDate, endDate])
 
@@ -137,9 +149,9 @@ function DbApp(){
       <Typography>Identify Desrepencies: </Typography> 
       </box>
       <div>
-      <TextField  id="start-datetime" label="Start Date" type="datetime-local" defaultValue={startDate} onChange={onChangeSetEnd}> </TextField>
+      <TextField  id="start-datetime" label="Start Date" type="datetime-local" defaultValue={startDate} > </TextField>
       <box m={1}>
-      <TextField  id="end-datetime" label="End Date" type="datetime-local" defaultValue={endDate} onChange={onChangeSetStart}> </TextField> 
+      <TextField  id="end-datetime" label="End Date" type="datetime-local" defaultValue={endDate} > </TextField> 
       </box>
       </div>
       <div>

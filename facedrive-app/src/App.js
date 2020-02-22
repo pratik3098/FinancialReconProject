@@ -19,9 +19,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import {connectToDb, getMaxDate,getMinDate,
-  dataWithInconsistency, updateNotes, updateStatus, getdetailByID, condateFormat
-} from'./db.js';
 
 function App() {
   return (
@@ -36,7 +33,6 @@ function App() {
 
 function DbApp(){
   document.title = "Facedrive App"
-  connectToDb().catch(err=>{console.error(err.message)})
   const[currentDate, setCurrentDate] = React.useState(moment(Date.now()).format())
   const[endDate, setEndDate] = React.useState(visibleDate(moment(Date.now()).format()))
   const[startDate, setStartDate] = React.useState(visibleDate(moment(Date.now()).format()))
@@ -50,19 +46,7 @@ function DbApp(){
     fd_amount: 95,
     desrepency_amount: 5,
     date:   visibleDate(moment(Date.now()).format())    }]) 
-    rowf().catch(err=>{console.error(err.message)})
-  async function rowf(){
-   let r =await dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').catch(err=>{console.error(err.message)})
-   r = Array.from(r)
-   console.log(r)
-   setRows(r)
-  }
-  
-  getMaxDate().then(res=>{setCurrentDate(res); setEndDate(res)}).catch(err=>{console.error(err)})
-  getMinDate().then(res=>{setStartDate(res)}).catch(err=>{console.error(err)})
-  dataWithInconsistency(startDate,endDate).then(res=>{setRows(res)}).catch(err=>{console.error(err)})
-  
- 
+
   
   function visibleDate(dt){
      return (dt.substring(0,10)+"T" + dt.substring(11,16))
@@ -94,8 +78,7 @@ function DbApp(){
   const classes = useStyles();
   React.useEffect(()=>{
 
-      dataWithInconsistency(startDate,endDate).then(res=>{setRows(res)}).catch(err=>{console.error(err)})
-      console.log(rows)
+ 
 
   },[startDate, endDate])
 

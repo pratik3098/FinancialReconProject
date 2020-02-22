@@ -5,7 +5,7 @@ exports.dbConfig ={
     port: 5432,
     //host: 'localhost'
     // For docker toolbox
-    host: '192.168.99.101'
+    host: '192.168.99.102'
 }
 
 exports.fcFilePath= "./fc_data.xlsx"

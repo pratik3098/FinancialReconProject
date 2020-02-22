@@ -118,15 +118,14 @@ exports.getMinDate =async function(){
     return result.rows[0]["min"]
 }
 
-exports.insertDataIntoDes=async function (){
+exports.insertDataIntoDes= async function (){
     await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateDesFD).catch(err=>{console.log(err.message)})
-    await sql.query(queries.updateDesStripe).catch(err=>{console.log(err.message)})
-
+   await sql.query(queries.updateDesStripe).catch(err=>{console.log(err.message)})
     console.log("Data inserted successfully in desrepency")
 }
 
-=async function condateFormat(d){
+async function condateFormat(d){
   
   let r=d.slice(0,10)+' '+d.slice(11,19)
   return r;
@@ -135,9 +134,9 @@ exports.insertDataIntoDes=async function (){
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
-this.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(res=>{
+/*this.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(res=>{
     console.log(res)
-}).catch(err=>{console.error(err.message)}) 
+}).catch(err=>{console.error(err.message)}) */
 //this.getMaxDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})
 //2020-02-13T05:00:00.000Z
 //this.getMinDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})

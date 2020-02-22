@@ -31,10 +31,10 @@ app.post('/dt1',(req,res)=>{
     if (db.isConnected){
         console.log("Body is: "+Object.values(req.body))
  
-       // db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
+        db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
           
-       db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
-       console.log(Object.keys(req.body))
+     //  db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
+       result.sort((a,b)=>{a.discrepency_id - b.discrepency_id})
         return res.status(200).send({
             success: 'true',
             data: result

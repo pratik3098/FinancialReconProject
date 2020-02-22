@@ -26,13 +26,16 @@ app.get('/',(req,res)=>{
 })
 
 
-app.get('/datawithinconsistency',(req,res)=>{
+app.post('/datawithinconsistency',(req,res)=>{
     if (db.isConnected){
-        db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
+      //  db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
           
-      // db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
-        console.log(result)
-        res.render('db',{val: result})
+       db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
+         console.log(result)
+        return res.status(200).send({
+            success: 'true',
+            data: result
+        })
         }).catch(err=>{
             res.render('db',{val: err.message})
         })
@@ -43,16 +46,20 @@ app.get('/datawithinconsistency',(req,res)=>{
 
 app.get('/minDate',(req,res)=>{
     db.getMinDate().then(res1=>{
-        console.log(res1)
-        res.render('db',{val: res1})
+        return res.status(200).send({
+            success: 'true',
+            data: res1
+        })
     }).catch(err=>{console.error(err.message)
     res.redirect('')})
 })
 
 app.get('/maxDate',(req,res)=>{
     db.getMaxDate().then(res1=>{
-        console.log(res1)
-        res.render('db',{val: res1})
+        return res.status(200).send({
+            success: 'true',
+            data: res1
+        })
     }).catch(err=>{console.error(err.message)
          res.redirect('/')})
 })
@@ -61,7 +68,10 @@ app.post('/updateNotes',(req,res)=>{
     db.updateNotes(req.body.id,req.body.notes).then(res1=>{
         let result="Notes updated for id: "+req.body.id
         console.log(result)
-        res.render('db',{val: result})
+        return res.status(200).send({
+            success: 'true',
+            data: result
+        })
     }).catch(err=>{console.error(err.message)
         res.redirect('/')})
 })
@@ -70,7 +80,10 @@ app.post('/updateStatus',(req,res)=>{
     db.updateStatus(req.body.id,req.body.status).then(res1=>{
         let result="Status updated for id: "+req.body.id
         console.log(result)
-        res.render('db',{val: result})
+        return res.status(200).send({
+            success: 'true',
+            data: result
+        })
     }).catch(err=>{console.error(err.message)
         res.redirect('/')})
 })

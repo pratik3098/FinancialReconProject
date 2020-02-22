@@ -47,6 +47,17 @@ function DbApp(){
     desrepency_amount: 5,
     date:   visibleDate(moment(Date.now()).format())    }]) 
 
+    let request1= new Request('http://localhost:8080/datawithinconsistency',{
+      method: 'POST',
+      headers: new Headers({'Content-Type': 'application/json'}),
+      body: JSON.stringify({startDate: startDate, endDate: endDate})
+    })
+    fetch('http://localhost:8080/datawithinconsistency').then(res=>{
+      res.text().then(data=>{
+        console.log(data)
+        //setRows(data.data)
+      }).catch(err=>{console.error(err.message)})
+    }).catch(err=>{console.error(err.message)})
   
   function visibleDate(dt){
      return (dt.substring(0,10)+"T" + dt.substring(11,16))
@@ -77,9 +88,17 @@ function DbApp(){
       
   const classes = useStyles();
   React.useEffect(()=>{
-
- 
-
+    fetch(new Request('http://localhost:8080/datawithinconsistency',{
+      method: 'POST',
+      headers: new Headers({'Content-Type': 'application/json'}),
+      body: JSON.stringify({startDate: startDate, endDate: endDate})
+    })).then(res=>{
+      res.text().then(data=>{
+        console.log(data)
+       // setRows(data)
+      }).catch(err=>{console.error(err.message)})
+    }).catch(err=>{console.error(err.message)})
+  
   },[startDate, endDate])
 
 

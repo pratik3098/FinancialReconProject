@@ -228,65 +228,51 @@ fetch('http://localhost:8080/maxDate').then(res=>{
      )
   }
   
-  
-   function DataPoper(dt){
-    const useStyles = makeStyles(theme => ({
-      popover: {
-        pointerEvents: 'none',
-      },
-      paper: {
-        padding: theme.spacing(1),
-      },
-    }));
-    
-      const classes = useStyles();
-      const [anchorEl, setAnchorEl] = React.useState(null);
-    
-      const handlePopoverOpen = event => {
-        setAnchorEl(event.currentTarget);
-      };
-    
-      const handlePopoverClose = () => {
-        setAnchorEl(null);
-      };
-    
-      const open = Boolean(anchorEl);
-      return (
-        <div>
-          <Typography
-            aria-owns={open ? 'mouse-over-popover' : undefined}
-            aria-haspopup="true"
-            onMouseEnter={handlePopoverOpen}
-            onMouseLeave={handlePopoverClose}
-          >
-            Note goes here
-          </Typography>
-          <Popover
-            id="mouse-over-popover"
-            className={classes.popover}
-            classes={{
-              paper: classes.paper,
-            }}
-            open={open}
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            onClose={handlePopoverClose}
-            disableRestoreFocus
-          >
-            <Typography>{dt}</Typography>
-          </Popover>
-        </div>
-      );
-  }
 }
 
+// e.g: dt={{id: "1", notes: "My notes" }}
+export function MultilineTextFields(dt) {
+  const [notes, setNotes] = React.useState(dt.dt.notes);
+  const useStyles = makeStyles(theme => ({
+    root: {
+      "& .MuiTextField-root": {
+        margin: theme.spacing(1),
+        width: 200
+      }
+    }
+  }));
 
+  const classes = useStyles();
+  const [value, setValue] = React.useState("Controlled");
+
+  const updateNotes = event => {
+    setNotes(event.target.value);
+    fetch('http://localhost:8080/updateNotes',{
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+        body: JSON.stringify({"id": dt.dt.id , "notes": dt.dt.notes})
+      }).then(res=>{
+        res.json().then(data=>{
+          console.log(data)
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)})
+  };
+
+  return (
+    <form className={classes.root} noValidate autoComplete="off">
+      <div>
+        <TextField
+          id="outlined-multiline-static"
+          label="Notes"
+          multiline
+          rows="4"
+          value={notes}
+          variant="outlined"
+          onChange={updateNotes}
+        />
+      </div>
+    </form>
+  );
+}
 
 export default App;

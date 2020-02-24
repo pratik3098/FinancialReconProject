@@ -41,12 +41,11 @@ app.post('/dt1',(req,res)=>{
         })
         
             }).catch(err=>{
+                return res.status(404).send({
+                    success: 'false',
+                    message: err.message
+                })
 
-            return res.status(404).send({
-                success: 'false',
-                message: err.message
-            })
-        
         })
     }
     else
@@ -56,19 +55,25 @@ app.post('/dt1',(req,res)=>{
 
 
 app.get('/minDate',(req,res)=>{
+    if (db.isConnected){
     db.getMinDate().then(res1=>{
         return res.status(200).send({
             success: 'true',
             data: res1
         })
-    }).catch(err=>{console.error(err.message)
+    }).catch(err=>{
         return res.status(404).send({
             success: 'false',
             message: err.message
-        })})
+        })
+    })
+   }
+   else
+    res.redirect('/') 
 })
 
 app.get('/maxDate',(req,res)=>{
+    if(db.isConnected){
     db.getMaxDate().then(res1=>{
         return res.status(200).send({
             success: 'true',
@@ -78,13 +83,18 @@ app.get('/maxDate',(req,res)=>{
         return res.status(404).send({
             success: 'false',
             message: err.message
-        })})
+        })
+    })
+    }
+    else
+    res.redirect('/')
 })
 
 app.post('/updateNotes',(req,res)=>{
+    if(db.isConnected){
     db.updateNotes(req.body.id,req.body.notes).then(res1=>{
-        let result="Notes updated for id: "+req.body.id
-    
+        let result="Notes updated for id: "+ req.body.id
+       console.log(res1)
         return res.status(200).send({
             success: 'true',
             data: result
@@ -94,12 +104,15 @@ app.post('/updateNotes',(req,res)=>{
             success: 'false',
             message: err.message
         })})
+    }else
+      redirect('/')
 })
 
 app.post('/updateStatus',(req,res)=>{
+    if(db.isConnected){
     db.updateStatus(req.body.id,req.body.status).then(res1=>{
         let result="Status updated for id: "+req.body.id
-        console.log(result)
+        console.log(res1)
         return res.status(200).send({
             success: 'true',
             data: result
@@ -109,6 +122,8 @@ app.post('/updateStatus',(req,res)=>{
             success: 'false',
             message: err.message
         })})
+    }else
+       res.redirect('/')
 })
 
 // Api call

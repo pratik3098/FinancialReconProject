@@ -104,7 +104,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
       }).then(res=>{
         res.json().then(data=>{
          // console.log(data)
-          setRows([{}])
+          //setRows([{}])
           setRows(data.data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
@@ -122,7 +122,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
           fetch('http://localhost:8080/updateStatus',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"id": dt , "status": 'reconciled'})
+        body: JSON.stringify({"id": dt.dt , "status": 'reconciled'})
       }).then(res=>{
         res.json().then(data=>{
           console.log(data)
@@ -136,7 +136,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
           fetch('http://localhost:8080/updateStatus',{
             method: 'POST',
             headers: new Headers({'Content-Type': 'application/json'}),
-            body: JSON.stringify({"id": dt , "status": 'rejected'})
+            body: JSON.stringify({"id": dt.dt , "status": 'rejected'})
           }).then(res=>{
             res.json().then(data=>{
               console.log(data)

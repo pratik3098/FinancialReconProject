@@ -78,6 +78,7 @@ exports.minDate= `SELECT min (Date) From disrepency;`
 exports.disrepency =`select (facedrive.up_amount_charged- stripe.amount) as Dis from facedrive,stripe;`
 exports.disrepencyInsertInto=`insert into disrepency (Discrepency_ID, Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values('706f8f26-7a48-40bf-bd0a-5c1950c41f5','txn_1GBA7kEG0OJcP9w4Cx9F2t8','new', 'no disrepency', NULL, 12,14,2,'2008-01-01 00:00:01' );`
 exports.updateStatusDesc= `update disrepency SET Status='new', Description='amount mis-match' where (Desrepency_Amount > 0); `
+exports.updateStatustonew = `update disrepency SET Status='new' where ( Discrepency_ID = `
 exports.updateStatustorejected=`update disrepency SET Status='rejected' where ( Discrepency_ID = `
 exports.updateStatutorec=`update disrepency SET Status='reconciled' where ( Discrepency_ID = `
 exports.updateNotes=`update disrepency SET notes = ` + ` where ( Discrepency_ID = `

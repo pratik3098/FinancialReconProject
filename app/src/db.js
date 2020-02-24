@@ -100,7 +100,8 @@ exports.updateStatus= async function(Id, status){
     await sql.query(queries.updateStatutorec+Id+queries.close).catch(err=>{console.log(err.message)})
     else if (status == 'rejected')
     await sql.query(queries.updateStatustorejected+Id+queries.close).catch(err=>{console.log(err.message)})
-
+    else
+    await sql.query(queries.updateStatustonew+Id+queries.close).catch(err=>{console.log(err.message)})
 }
 exports.getdetailByID= async function(id){
    id ="\'"+id+"\'"
@@ -130,7 +131,7 @@ function condateFormat(d){
   let r=d.substring(0,10)+' '+d.substring(11,19)
   return r;
 }
-this.connectToDb().catch(err=>{console.error(err.message)})
+//this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})

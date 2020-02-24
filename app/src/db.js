@@ -84,7 +84,7 @@ exports.readSTDataFromExcel= async function(){
 exports.dataWithInconsistency= async function(startDate, endDate){
    // startDate=await condateFormat(startDate).catch(err=>{console.log(err.message)})
    // endDate=await condateFormat(endDate).catch(err=>{console.log(err.message)})
-    let result = await sql.query(`select * from disrepency where date >= '` + startDate+ `' and date <= '`+endDate+`';`).catch(err=>{console.log(err.message)})
+    let result = await sql.query(`select * from disrepency where date >= '` + startDate+ `' and date <= '`+endDate+`'  order by discrepency_id;`).catch(err=>{console.log(err.message)})
     return result.rows
 }
 
@@ -134,14 +134,14 @@ this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
+//this.insertDataIntoDes().catch(err=>{console.log(err)})
 /*this.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(res=>{
-    console.log(res)
-}).catch(err=>{console.error(err.message)}) */
+    console.log(res[0])
+}).catch(err=>{console.error(err.message)}) */ 
 //this.getMaxDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})
 //2020-02-13T05:00:00.000Z
 //this.getMinDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})
 // 2020-02-12T05:00:00.000Z
-//this.insertDataIntoDes().catch(err=>{console.log(err)})
 //console.log(res)
 
-this.updateStatus(1, 'reconciled').catch(err=>{console.log(err)})
+//this.updateStatus(1, 'reconciled').catch(err=>{console.log(err)})

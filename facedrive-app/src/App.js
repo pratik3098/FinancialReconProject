@@ -57,16 +57,16 @@ fetch('http://localhost:8080/maxDate').then(res=>{
     
    
   
-      fetch('http://localhost:8080/dt1',{
+      /* fetch('http://localhost:8080/dt1',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
       }).then(res=>{
         res.json().then(data=>{
-        //  console.log(data)
+          console.log(data)
           setRows(data.data)
         }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)}) */
     
     function visibleDate(dt){
        return (dt.substring(0,10)+"T" + dt.substring(11,16))
@@ -211,7 +211,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
                 <TableCell component="th" scope="row">{row.discrepency_id}</TableCell>
                 <TableCell align="center">{row.stripe_charge_id}</TableCell>
                 <TableCell align="center" >{row.status} <MenuPopupState dt={row.discrepency_id} ></MenuPopupState></TableCell>
-                <TableCell align="center">{row.description}  </TableCell>
+                <TableCell align="center">{row.description}</TableCell>
                 <TableCell align="center">{row.stripe_amount}</TableCell>
                 <TableCell align="center">{row.fd_amount}</TableCell>
                 <TableCell align="center">{row.desrepency_amount}</TableCell>
@@ -259,7 +259,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
           >
-            {dt.discrepency_id}
+            Note goes here
           </Typography>
           <Popover
             id="mouse-over-popover"
@@ -280,7 +280,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography>{dt.notes}</Typography>
+            <Typography>{dt}</Typography>
           </Popover>
         </div>
       );

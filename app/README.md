@@ -13,8 +13,6 @@ It accepts GET and POST requests and sends the data.
 ### Command: 
 docker-compose -f postgres-db.yml up -d
 
-
-
 ### To Setup Docker-enviorment:
 1. chmod 777 * src/.docker-config.sh
 2. sudo ./docker-config.sh 

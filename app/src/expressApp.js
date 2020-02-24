@@ -44,7 +44,7 @@ app.post('/dt1',(req,res)=>{
 
             return res.status(404).send({
                 success: 'false',
-                data: err.message
+                message: err.message
             })
         
         })
@@ -64,7 +64,7 @@ app.get('/minDate',(req,res)=>{
     }).catch(err=>{console.error(err.message)
         return res.status(404).send({
             success: 'false',
-            data: err.message
+            message: err.message
         })})
 })
 
@@ -77,7 +77,7 @@ app.get('/maxDate',(req,res)=>{
     }).catch(err=>{console.error(err.message)
         return res.status(404).send({
             success: 'false',
-            data: err.message
+            message: err.message
         })})
 })
 
@@ -92,7 +92,7 @@ app.post('/updateNotes',(req,res)=>{
     }).catch(err=>{console.error(err.message)
         return res.status(404).send({
             success: 'false',
-            data: err.message
+            message: err.message
         })})
 })
 
@@ -105,7 +105,10 @@ app.post('/updateStatus',(req,res)=>{
             data: result
         })
     }).catch(err=>{console.error(err.message)
-        res.redirect('/')})
+        return res.status(404).send({
+            success: 'false',
+            message: err.message
+        })})
 })
 
 // Api call

@@ -119,7 +119,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
       const changeStatus= (event)=>{
        
         if(event.nativeEvent.target.outerText=='Reconcile'){
-          fetch('http://localhost:8080/dt1',{
+          fetch('http://localhost:8080/updateStatus',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt , "status": 'reconciled'})
@@ -133,7 +133,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         }
         else if(event.nativeEvent.target.outerText=='Reject'){
       
-          fetch('http://localhost:8080/dt1',{
+          fetch('http://localhost:8080/updateStatus',{
             method: 'POST',
             headers: new Headers({'Content-Type': 'application/json'}),
             body: JSON.stringify({"id": dt , "status": 'rejected'})

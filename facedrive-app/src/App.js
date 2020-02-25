@@ -17,26 +17,12 @@ import Paper from '@material-ui/core/Paper';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
-import fetch from 'node-fetch';
+import fetch, { Request } from 'node-fetch';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 
-function App() {
-  const[max,setMax]=React.useState('')
-const[min,setMin]=React.useState('')
-fetch('http://localhost:8080/minDate').then(res=>{
-  res.json().then(data=>{
-    console.log("Min date: " +data.data)
-     setMin(data.data)
-  })
-}).catch(err=>{console.error(err.message)})
+function App() {  
 
-fetch('http://localhost:8080/maxDate').then(res=>{
-  res.json().then(data=>{
-    console.log("Max date: "+data.data)
-     setMax(data.data)
-  })
-}).catch(err=>{console.error(err.message)})
   document.title = "Facedrive App"
   return (
     <div className="App">
@@ -45,14 +31,17 @@ fetch('http://localhost:8080/maxDate').then(res=>{
       </div>
     </div>
   );
+}
+  
 
-  function DbApp(){
-    const[currentDate, setCurrentDate] = React.useState(max)
-    const[endDate, setEndDate] = React.useState(visibleDate(max))
-    const[startDate, setStartDate] = React.useState(visibleDate(min))
+function DbApp(){
+    const[currentDate, setCurrentDate] = React.useState(' ')
+    const[endDate, setEndDate] = React.useState(visibleDate(' '))
+    const[startDate, setStartDate] = React.useState(visibleDate(' '))
     const[rows,setRows]= React.useState([{}]) 
     const[status,setStatus]=React.useState('new')
      
+  
     function visibleDate(dt){
        return (dt.substring(0,10)+"T" + dt.substring(11,16))
     }
@@ -76,11 +65,24 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         },
       },
     }));
-   
-  
-       
-        
     const classes = useStyles();
+    React.useEffect(()=>{
+      fetch(new Request('http://localhost:8080/minDate')).then(res=>{
+        res.json().then(data=>{
+          console.log("Min date: " +data.data)
+           setStartDate(visibleDate(data.data))
+        })
+      }).catch(err=>{console.error(err.message)})
+      
+      fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
+        res.json().then(data=>{
+          console.log("Max date: "+data.data)
+           setCurrentDate(visibleDate(data.data))
+           setEndDate(visibleDate(data.data))
+          
+        })
+      }).catch(err=>{console.error(err.message)})
+     },[])
     React.useEffect(()=>{
       fetch('http://localhost:8080/dt1',{
         method: 'POST',
@@ -88,16 +90,13 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
       }).then(res=>{
         res.json().then(data=>{
-         // console.log(data)
-          //setRows([{}])
+         console.log("Rows: "+data)
           setRows(data.data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
     
     },[startDate,endDate,status])
 
-    //React.useEffect(()=>{},[status])
-  
    
   
     function MenuPopupState(dt) {
@@ -173,9 +172,9 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         <Typography>Identify Desrepencies: </Typography> 
         </box>
         <div>
-        <TextField  id="start-datetime" label="Start Date" type="datetime-local" defaultValue={startDate} onChange={onChangeSetStart} > </TextField>
+        <TextField  id="start-datetime" label="Start Date" type="datetime-local" value={startDate} onChange={onChangeSetStart} > </TextField>
         <box m={1}>
-        <TextField  id="end-datetime" label="End Date" type="datetime-local" defaultValue={endDate} onChange={onChangeSetEnd}> </TextField> 
+        <TextField  id="end-datetime" label="End Date" type="datetime-local" value={endDate} onChange={onChangeSetEnd}> </TextField> 
         </box>
         </div>
         <div>
@@ -216,7 +215,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
      )
   }
   
-}
+
 // e.g: dt={{id: "1", notes: "My notes" }}
 function SimplePopover(dt) {
   const useStyles = makeStyles(theme => ({

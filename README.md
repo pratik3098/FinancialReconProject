@@ -10,8 +10,15 @@ It accepts GET and POST requests and sends the data.
 2. Docker-Compose
 
 
-### Command: 
-docker-compose -f postgres-db.yml up -d
+### Commands to start  the app: 
+1. docker-compose -f ./app/src/postgres-db.yml up -d
+2. node ./app/src/expressApp.js
+3. cd facedrive-app
+4. npm start
+
+### Note: If starting project for first time:
+1. cd facedrive-app
+2. npm install
 
 
 

@@ -26,7 +26,7 @@ app.get('/',(req,res)=>{
     }).catch(err=>{ res.render('db',{val: err.message})})
 })
 
-
+db.connectToDb().then(res=>{console.log(res)}).catch(err=>{console.error(err.message)})
 app.post('/dt1',(req,res)=>{
     if (db.isConnected){
         console.log("Body is: "+Object.values(req.body))
@@ -126,5 +126,5 @@ app.post('/updateStatus',(req,res)=>{
        res.redirect('/')
 })
 
-// Api call
-//http://localhost:8080/datawithinconsistency?action=post&startDate=2020-02-12T05:00:00.000Z&endDate=2020-02-13T05:00:00.000Z
+// Sample Api call from browser
+//http://localhost:8080/dt1?action=post&startDate=2020-02-12T05:00:00.000Z&endDate=2020-02-13T05:00:00.000Z

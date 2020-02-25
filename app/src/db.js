@@ -82,8 +82,6 @@ exports.readSTDataFromExcel= async function(){
 }
 
 exports.dataWithInconsistency= async function(startDate, endDate){
-   // startDate=await condateFormat(startDate).catch(err=>{console.log(err.message)})
-   // endDate=await condateFormat(endDate).catch(err=>{console.log(err.message)})
     let result = await sql.query(`select * from disrepency where date >= '` + startDate+ `' and date <= '`+endDate+`'  order by discrepency_id;`).catch(err=>{console.log(err.message)})
     return result.rows
 }
@@ -127,7 +125,6 @@ exports.insertDataIntoDes= async function (){
 }
 
 function condateFormat(d){
-  
   let r=d.substring(0,10)+' '+d.substring(11,19)
   return r;
 }

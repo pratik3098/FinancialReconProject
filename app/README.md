@@ -24,3 +24,7 @@ docker-compose -f postgres-db.yml up -d
 1. sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 2. nvm install node
 
+
+### Sample API call from browser 
+
+### http://localhost:8080/dt1?action=post&startDate=2020-02-12T05:00:00.000Z&endDate=2020-02-13T05:00:00.000Z

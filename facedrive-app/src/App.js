@@ -281,7 +281,7 @@ export function MultilineTextFields(dt) {
     fetch('http://localhost:8080/updateNotes',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"id": dt.dt.id , "notes": dt.dt.notes})
+        body: JSON.stringify({"id": dt.dt.id , "notes": notes})
       }).then(res=>{
         res.json().then(data=>{
           console.log(data)

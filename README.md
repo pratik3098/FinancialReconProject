@@ -27,6 +27,8 @@ It accepts GET and POST requests and sends the data.
 2. sudo ./docker-config.sh 
 3. log-out and log-in
 4. sudo apt install docker-compose -y 
+#### Note:  For Windows, use Docker-Toolkit.
+#### Note: Change the localhost address in ./app/src/configData.js to docker-machine ip address
 
 
 ### To setup Node enviorment on Ubuntu:

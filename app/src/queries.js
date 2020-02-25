@@ -91,5 +91,5 @@ exports.insertAllData = `insert into disrepency (Stripe_Charge_ID, Status, Descr
 exports.updateProperStatus= `update disrepency set Description = 'exists in stripe only' , Status='new' where FD_Amount IS NULL and Stripe_Amount IS NOT NULL;`
 exports.updateProperDes= `update disrepency set  Description = 'exists in app only', Status='new' where Stripe_Amount IS  NULL and FD_Amount IS NOT NULL;`
 exports.updateDesrBoth = `update disrepency set  Description = 'exists in none', Status='new' where Stripe_Amount IS NULL  and FD_Amount IS NULL;`
-exports.updateDesrNone = `update disrepency set  Description = 'no disrepency', Status='new' where (Stripe_Amount - FD_Amount) = 0;`
+exports.updateDesrNone = `update disrepency set  Description = 'no disrepency', Status='new' where ((Stripe_Amount - FD_Amount) = 0) and (Stripe_Amount IS Not NULL) and (FD_AMOUNT is NOT NULL);`
 

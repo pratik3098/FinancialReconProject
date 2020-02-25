@@ -45,7 +45,14 @@ function DbApp(){
     function visibleDate(dt){
        return (dt.substring(0,10)+"T" + dt.substring(11,16))
     }
-  
+    
+    fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
+      res.json().then(data=>{
+        console.log("Current date: "+data.data)
+         setCurrentDate(visibleDate(data.data))
+        
+      })
+    }).catch(err=>{console.error(err.message)})
   
   
     const onChangeSetStart=(event)=>{

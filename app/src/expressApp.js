@@ -34,7 +34,7 @@ app.post('/dt1',(req,res)=>{
         db.dataWithInconsistency(req.body.startDate,req.body.endDate).then(result=>{
           
      //  db.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(result=>{
-       result.sort((a,b)=>{a.discrepency_id - b.discrepency_id})
+      // result.sort((a,b)=>{a.discrepency_id - b.discrepency_id})
         return res.status(200).send({
             success: 'true',
             data: result
@@ -126,5 +126,3 @@ app.post('/updateStatus',(req,res)=>{
        res.redirect('/')
 })
 
-// Sample Api call from browser
-//http://localhost:8080/dt1?action=post&startDate=2020-02-12T05:00:00.000Z&endDate=2020-02-13T05:00:00.000Z

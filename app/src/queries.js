@@ -63,7 +63,7 @@ exports.createDisrepencyTable = ` CREATE TABLE disrepency (
     Discrepency_ID     SERIAL PRIMARY KEY,
     Stripe_Charge_ID   VARCHAR(28),
     Status             disrepencyStatus DEFAULT 'new',
-    Description        disrepencyDescription DEFAULT 'amount mis-match',
+    Description        disrepencyDescription DEFAULT 'no disrepency',
     Notes              VARCHAR(100),
     Stripe_Amount      NUMERIC DEFAULT NULL,
     FD_Amount          NUMERIC DEFAULT NULL,

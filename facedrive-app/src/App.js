@@ -1,6 +1,7 @@
 import React from 'react';
 import 'date-fns';
 import './App.css';
+import 'moment';
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -77,7 +78,7 @@ function DbApp(){
       fetch(new Request('http://localhost:8080/minDate')).then(res=>{
         res.json().then(data=>{
           console.log("Min date: " +data.data)
-           setStartDate(visibleDate(data.data))
+           setStartDate(data.data)
         })
       }).catch(err=>{console.error(err.message)})
       
@@ -85,22 +86,36 @@ function DbApp(){
         res.json().then(data=>{
           console.log("Max date: "+data.data)
            setCurrentDate(visibleDate(data.data))
-           setEndDate(visibleDate(data.data))
+           setEndDate(data.data)
           
         })
       }).catch(err=>{console.error(err.message)})
+
+      fetch(new Request('http://localhost:8080/getAll')).then(res=>{
+        res.json().then(data=>{
+        console.log("Rows: "+data.data)
+         //setRows(data.data)
+         //setRows([{}])
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)}) 
+      
      },[])
+
+
     React.useEffect(()=>{
       fetch('http://localhost:8080/dt1',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
+        body: JSON.stringify({"startDate": startDate, "endDate": endDate})
       }).then(res=>{
         res.json().then(data=>{
-         console.log("Rows: "+data)
-          setRows(data.data)
+
+            console.log("Dt1 : "+ data)
+              //setRows(data.data)
+          
+           
         }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)}) 
     
     },[startDate,endDate,status])
 

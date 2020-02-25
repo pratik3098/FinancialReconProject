@@ -53,7 +53,23 @@ app.post('/dt1',(req,res)=>{
 })
 
 
-
+app.get('/getAll',(req,res)=>{
+    if (db.isConnected){
+    db.getAllData().then(res1=>{
+        return res.status(200).send({
+            success: 'true',
+            data: res1
+        })
+    }).catch(err=>{
+        return res.status(404).send({
+            success: 'false',
+            message: err.message
+        })
+    })
+   }
+   else
+    res.redirect('/') 
+})
 app.get('/minDate',(req,res)=>{
     if (db.isConnected){
     db.getMinDate().then(res1=>{

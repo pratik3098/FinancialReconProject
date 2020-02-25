@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "excel-date-to-js": "^1.0.2",
     "express": "^4.17.1",
     "hbs": "^4.1.0",
     "moment": "^2.24.0",

@@ -1,5 +1,6 @@
 const Pool = require('pg').Pool
 const xlsx = require('xlsx')
+const { getJsDateFromExcel } = require("excel-date-to-js")
 const path =require('path')
 const moment= require('moment')
 const config =require('./configData')
@@ -58,9 +59,10 @@ exports.readFCDataFromExcel= async function(){
     // JSON Arrays of the sheet data
     let fcData = xlsx.utils.sheet_to_json(fcFile.Sheets[fcFile.SheetNames[0]])
    fcData.forEach(res =>{
-   let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
+
+    let val ="\'"+res["Ride ID"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Ride Created"])).format() +"\'"+" , "+"\'"+res["Ride Status"]+"\'"+" , "+"\'"+res["Ride Region"]+"\'"+" , "+res["RP Client Pay"]+" , "+res["RP Facedrive Fee"]+" , "+"\'"+res["RP Ride Status"]+"\'"+" , "+"\'"+res["RP Toll Roads"]+"\'"+" , "+res["RP Carbon Offset"]+" , "+res["RP Driver Earning"]+" , "+res["RP Driver Tax"]+" , "+res["RP Client Tax"]+" , "+
     res["RP Base Fare"]+" , "+res["RP Facedrive Fee %"]+" , "+res["UP Client Pay"]+" , "+res["UP Facedrive Fee"]+" , "+res["UP Tips"]+" , "+"\'"+res["UP Payment Status"]+"\'"+" , "+"\'"+res["Stripe Reserve Charge ID"]+"\'"+" , "+"\'"+res["Amount Charged ID"]+"\'"+" , "+res["UP Amount Charged"]+" , "+"\'"+res["Coupon Name"]+"\'"+" , "+res["Coupon $ OFF"]+" , "+res["Coupoin % Off"] + " , "+
-    "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"] 
+    "\'"+res["Coupon Applied Status"]+"\'"+" , " + res["Coupon Amount Charged"]
 
     Promise.resolve(sql.query(queries.facedriveInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
   })  
@@ -75,9 +77,9 @@ exports.readSTDataFromExcel= async function(){
     // JSON Arrays of the sheet data
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     stripeData.forEach(res =>{
-    let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+moment(new Date(1900,0,res["Created (UTC)"])).format() +"\'"+" , "+"\'"+moment(new Date(1900,0,res["Available On (UTC)"])).format() +"\'"
+    let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
     Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
-    })  
+    }) 
     console.log("Data inserted into Stripe successfully")
 }
 
@@ -127,18 +129,18 @@ exports.insertDataIntoDes= async function (){
     console.log("Data inserted successfully in desrepency")
 }
 
-function condateFormat(d){
-  let r=d.substring(0,10)+' '+d.substring(11,19)
-  return r;
+exports.getAllData= async function (){
+    let result = await sql.query(queries.getAllfromData).catch(err=>{console.log(err.message)})
+    return result.rows
 }
-//this.connectToDb().catch(err=>{console.error(err.message)})
+this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
 //this.insertDataIntoDes().catch(err=>{console.log(err)})
-/*this.dataWithInconsistency('2020-02-12T05:00:00.000Z','2020-02-13T05:00:00.000Z').then(res=>{
-    console.log(res[0])
-}).catch(err=>{console.error(err.message)}) */ 
+/*this.dataWithInconsistency('2020-02-09T05:00:00.000Z','2020-02-12T05:00:00.000Z').then(res=>{
+    console.log(res)
+}).catch(err=>{console.error(err.message)}) */
 //this.getMaxDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})
 //2020-02-13T05:00:00.000Z
 //this.getMinDate().then(res=>{console.log(res)}).catch(err=>{console.error(err)})
@@ -146,3 +148,5 @@ function condateFormat(d){
 //console.log(res)
 
 //this.updateStatus(1, 'reconciled').catch(err=>{console.log(err)})
+//this.getAllData().then(res=>{console.log(res)}).catch(err=>{console.log(err.message)})
+//console.log(condateFormat('2020-02-12T05:00:00.000Z'))

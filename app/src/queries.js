@@ -73,6 +73,7 @@ exports.createDisrepencyTable = ` CREATE TABLE disrepency (
 
 
 
+exports.getAllfromData = `SELECT * from disrepency order by Discrepency_ID;`
 exports.maxDate= `SELECT max (Date) From disrepency;`
 exports.minDate= `SELECT min (Date) From disrepency;`
 exports.disrepency =`select (facedrive.up_amount_charged- stripe.amount) as Dis from facedrive,stripe;`
@@ -84,10 +85,7 @@ exports.updateStatutorec=`update disrepency SET Status='reconciled' where ( Disc
 exports.updateNotes=`update disrepency SET notes = ` + ` where ( Discrepency_ID = `
 exports.getdetailByID = `select * from disrepency where Discrepency_ID= `
 exports.dataWithInconsistency = `select * from discrepency where date >= ` 
-
 exports.insertAllData = `insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) select  (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (CAST (facedrive.up_amount_charged - stripe.amount  as int)) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive FULL JOIN stripe ON facedrive.amount_charged_id = stripe.source;`
-//exports.insertAllData = `insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) select  (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (CAST (facedrive.up_amount_charged - stripe.amount  as int)) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive,stripe where ((facedrive.up_amount_charged - stripe.amount ) > 0) and facedrive.amount_charged_id = stripe.source;`
-
 exports.updateProperStatus= `update disrepency set Description = 'exists in stripe only' , Status='new' where FD_Amount IS NULL and Stripe_Amount IS NOT NULL;`
 exports.updateProperDes= `update disrepency set  Description = 'exists in app only', Status='new' where Stripe_Amount IS  NULL and FD_Amount IS NOT NULL;`
 exports.updateDesrBoth = `update disrepency set  Description = 'exists in none', Status='new' where Stripe_Amount IS NULL  and FD_Amount IS NULL;`

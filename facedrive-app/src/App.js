@@ -231,6 +231,56 @@ fetch('http://localhost:8080/maxDate').then(res=>{
 }
 
 // e.g: dt={{id: "1", notes: "My notes" }}
+export function SimplePopover(dt) {
+  const useStyles = makeStyles(theme => ({
+    typography: {
+      padding: theme.spacing(2)
+    }
+  }));
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  return (
+    <div>
+      <Button
+        aria-describedby={id}
+        variant="contained"
+        color="primary"
+        onClick={handleClick}
+      >
+        {dt.dt.id}
+      </Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center"
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center"
+        }}
+      >
+        <MultilineTextFields dt={dt.dt} />
+      </Popover>
+    </div>
+  );
+}
+
 export function MultilineTextFields(dt) {
   const [notes, setNotes] = React.useState(dt.dt.notes);
   const useStyles = makeStyles(theme => ({
@@ -241,10 +291,6 @@ export function MultilineTextFields(dt) {
       }
     }
   }));
-
-  const classes = useStyles();
-  const [value, setValue] = React.useState("Controlled");
-
   const updateNotes = event => {
     setNotes(event.target.value);
     fetch('http://localhost:8080/updateNotes',{
@@ -256,6 +302,12 @@ export function MultilineTextFields(dt) {
           console.log(data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
+  };
+  const classes = useStyles();
+  const [value, setValue] = React.useState("Controlled");
+
+  const handleChange = event => {
+    setValue(event.target.value);
   };
 
   return (

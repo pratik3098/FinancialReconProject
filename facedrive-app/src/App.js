@@ -47,27 +47,12 @@ fetch('http://localhost:8080/maxDate').then(res=>{
   );
 
   function DbApp(){
- 
-
     const[currentDate, setCurrentDate] = React.useState(max)
     const[endDate, setEndDate] = React.useState(visibleDate(max))
     const[startDate, setStartDate] = React.useState(visibleDate(min))
     const[rows,setRows]= React.useState([{}]) 
     const[status,setStatus]=React.useState('new')
-    
-   
-  
-      /* fetch('http://localhost:8080/dt1',{
-        method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"startDate": '2020-02-12T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
-      }).then(res=>{
-        res.json().then(data=>{
-          console.log(data)
-          setRows(data.data)
-        }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)}) */
-    
+     
     function visibleDate(dt){
        return (dt.substring(0,10)+"T" + dt.substring(11,16))
     }
@@ -208,7 +193,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
           <TableBody>
             {rows.map(row => (
               <TableRow key={row.discrepency_id}>
-                <TableCell component="th" scope="row">{row.discrepency_id}</TableCell>
+                <TableCell component="th" scope="row"><SimplePopover dt={{id: row.discrepency_id, notes: row.notes }}></SimplePopover></TableCell>
                 <TableCell align="center">{row.stripe_charge_id}</TableCell>
                 <TableCell align="center" >{row.status} <MenuPopupState dt={row.discrepency_id} ></MenuPopupState></TableCell>
                 <TableCell align="center">{row.description}</TableCell>

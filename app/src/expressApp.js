@@ -94,7 +94,7 @@ app.post('/updateNotes',(req,res)=>{
     if(db.isConnected){
     db.updateNotes(req.body.id,req.body.notes).then(res1=>{
         let result="Notes updated for id: "+ req.body.id
-       console.log(res1)
+       console.log(req.body.notes)
         return res.status(200).send({
             success: 'true',
             data: result

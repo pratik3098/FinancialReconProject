@@ -26,14 +26,14 @@ function App() {
 const[min,setMin]=React.useState('')
 fetch('http://localhost:8080/minDate').then(res=>{
   res.json().then(data=>{
-  //  console.log(data.data)
+    console.log("Min date: " +data.data)
      setMin(data.data)
   })
 }).catch(err=>{console.error(err.message)})
 
 fetch('http://localhost:8080/maxDate').then(res=>{
   res.json().then(data=>{
-    //console.log(data.data)
+    console.log("Max date: "+data.data)
      setMax(data.data)
   })
 }).catch(err=>{console.error(err.message)})
@@ -142,7 +142,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
         <PopupState variant="popover" popupId="demo-popup-menu">
           {popupState => (
             <React.Fragment>
-              <Button variant="contained" color="primary" {...bindTrigger(popupState)} >
+              <Button variant="contained" color="default" {...bindTrigger(popupState)} >
                 action
               </Button>
               <Menu {...bindMenu(popupState)}>
@@ -155,7 +155,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
       );
     }
     
-    
+
    
      return(
        <div>
@@ -214,9 +214,8 @@ fetch('http://localhost:8080/maxDate').then(res=>{
   }
   
 }
-
 // e.g: dt={{id: "1", notes: "My notes" }}
-export function SimplePopover(dt) {
+function SimplePopover(dt) {
   const useStyles = makeStyles(theme => ({
     typography: {
       padding: theme.spacing(2)
@@ -266,7 +265,7 @@ export function SimplePopover(dt) {
   );
 }
 
-export function MultilineTextFields(dt) {
+function MultilineTextFields(dt) {
   const [notes, setNotes] = React.useState(dt.dt.notes);
   const useStyles = makeStyles(theme => ({
     root: {
@@ -278,13 +277,14 @@ export function MultilineTextFields(dt) {
   }));
   const updateNotes = event => {
     setNotes(event.target.value);
+    dt.dt.notes=notes
     fetch('http://localhost:8080/updateNotes',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt.dt.id , "notes": notes})
       }).then(res=>{
         res.json().then(data=>{
-          console.log(data)
+          console.log("Notes: " + data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
   };
@@ -311,5 +311,6 @@ export function MultilineTextFields(dt) {
     </form>
   );
 }
+
 
 export default App;

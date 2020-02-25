@@ -107,13 +107,15 @@ fetch('http://localhost:8080/maxDate').then(res=>{
           fetch('http://localhost:8080/updateStatus',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"id": dt.dt , "status": 'reconciled'})
+        body: JSON.stringify({"id": dt.dt.id , "status": 'reconciled'})
       }).then(res=>{
+        setStatus('reconciled')
+        dt.dt.status= 'reconciled'
         res.json().then(data=>{
-          console.log(data)
+          console.log("Status: "+data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
-          setStatus('reconciled')
+          
           console.log('Status: reconciled')
         }
         else if(event.nativeEvent.target.outerText=='Reject'){
@@ -121,13 +123,14 @@ fetch('http://localhost:8080/maxDate').then(res=>{
           fetch('http://localhost:8080/updateStatus',{
             method: 'POST',
             headers: new Headers({'Content-Type': 'application/json'}),
-            body: JSON.stringify({"id": dt.dt , "status": 'rejected'})
+            body: JSON.stringify({"id": dt.dt.id , "status": 'rejected'})
           }).then(res=>{
             res.json().then(data=>{
-              console.log(data)
+              setStatus('rejected')
+              dt.dt.status= 'rejected'
+              console.log("Status: " +data)
             }).catch(err=>{console.error(err.message)})
           }).catch(err=>{console.error(err.message)})
-          setStatus('rejected')
           console.log('Status: rejected')
         }
         else{
@@ -195,7 +198,7 @@ fetch('http://localhost:8080/maxDate').then(res=>{
               <TableRow key={row.discrepency_id}>
                 <TableCell component="th" scope="row"><SimplePopover dt={{id: row.discrepency_id, notes: row.notes }}></SimplePopover></TableCell>
                 <TableCell align="center">{row.stripe_charge_id}</TableCell>
-                <TableCell align="center" >{row.status} <MenuPopupState dt={row.discrepency_id} ></MenuPopupState></TableCell>
+                <TableCell align="center" >{row.status} <MenuPopupState dt={{id: row.discrepency_id, status: row.status}} ></MenuPopupState></TableCell>
                 <TableCell align="center">{row.description}</TableCell>
                 <TableCell align="center">{row.stripe_amount}</TableCell>
                 <TableCell align="center">{row.fd_amount}</TableCell>

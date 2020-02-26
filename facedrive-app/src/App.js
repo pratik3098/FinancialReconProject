@@ -121,65 +121,7 @@ function DbApp(){
     
     },[startDate,endDate,status])
 
-    function MenuPopupState(dt) {
-      const changeStatus= (event)=>{
-       
-        if(event.nativeEvent.target.outerText=='Reconcile'){
-          fetch('http://localhost:8080/updateStatus',{
-        method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"id": dt.dt.id , "status": 'reconciled'})
-      }).then(res=>{
-        setStatus('reconciled')
-        dt.dt.status= 'reconciled'
-        res.json().then(data=>{
-          console.log("Status: "+data)
-        }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)})
-          
-          console.log('Status: reconciled')
-        }
-        else if(event.nativeEvent.target.outerText=='Reject'){
-      
-          fetch('http://localhost:8080/updateStatus',{
-            method: 'POST',
-            headers: new Headers({'Content-Type': 'application/json'}),
-            body: JSON.stringify({"id": dt.dt.id , "status": 'rejected'})
-          }).then(res=>{
-            res.json().then(data=>{
-              setStatus('rejected')
-              dt.dt.status= 'rejected'
-              console.log("Status: " +data)
-            }).catch(err=>{console.error(err.message)})
-          }).catch(err=>{console.error(err.message)})
-          console.log('Status: rejected')
-        }
-        else{
-          setStatus('new')
-          console.log('Status: new')
-        }
-        console.log(dt)
-   
-       }
-      
-
-    
-      return (
-        <PopupState variant="popover" popupId="demo-popup-menu">
-          {popupState => (
-            <React.Fragment>
-              <Button variant="contained" color="default" {...bindTrigger(popupState)} >
-                action
-              </Button>
-              <Menu {...bindMenu(popupState)}>
-                <MenuItem onClick={popupState.close,changeStatus} defaultValue='Reconciled'>Reconcile</MenuItem>
-                <MenuItem onClick={popupState.close,changeStatus} defaultValue='Rejected'>Reject</MenuItem>
-              </Menu>
-            </React.Fragment>
-          )}
-        </PopupState>
-      );
-    }
+  
     
 
    
@@ -495,7 +437,6 @@ function MultilineTextViews(dt) {
  function EnhancedTable() {
    
   const [rows, setRows] = React.useState([{}]);
-  const [status,setStatus]=React.useState('new')
   React.useState(()=>{
     fetch(new Request('http://localhost:8080/getAll')).then(res=>{
         res.json().then(data=>{
@@ -505,100 +446,8 @@ function MultilineTextViews(dt) {
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)}) 
   },[])
-  React.useState(()=>{
-    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
-        res.json().then(data=>{
-        console.log("Rows: "+data.data)
-         setRows(data.data)
-         
-        }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)}) 
-  },[status])
   
-  function MenuPopupState(dt) {
-    const changeStatus = event => {
-      if (event.nativeEvent.target.outerText == "Reconcile") {
-        fetch("http://localhost:8080/updateStatus", {
-          method: "POST",
-          headers: new Headers({ "Content-Type": "application/json" }),
-          body: JSON.stringify({ id: dt.dt.id, status: "reconciled" })
-        })
-          .then(res => {
-            setStatus("reconciled");
-            dt.dt.status = "reconciled";
-            res
-              .json()
-              .then(data => {
-                console.log("Status: " + data);
-              })
-              .catch(err => {
-                console.error(err.message);
-              });
-          })
-          .catch(err => {
-            console.error(err.message);
-          });
-
-        console.log("Status: reconciled");
-      } else if (event.nativeEvent.target.outerText == "Reject") {
-        fetch("http://localhost:8080/updateStatus", {
-          method: "POST",
-          headers: new Headers({ "Content-Type": "application/json" }),
-          body: JSON.stringify({ id: dt.dt.id, status: "rejected" })
-        })
-          .then(res => {
-            res
-              .json()
-              .then(data => {
-                setStatus("rejected");
-                dt.dt.status = "rejected";
-                console.log("Status: " + data);
-              })
-              .catch(err => {
-                console.error(err.message);
-              });
-          })
-          .catch(err => {
-            console.error(err.message);
-          });
-        console.log("Status: rejected");
-      } else {
-        setStatus("new");
-        console.log("Status: new");
-      }
-      console.log(dt);
-    };
-    return (
-      <PopupState variant="popover" popupId="demo-popup-menu">
-        {popupState => (
-          <React.Fragment>
-            <Button
-              variant="contained"
-              color="default"
-              {...bindTrigger(popupState)}
-            >
-              action
-            </Button>
-            <Menu {...bindMenu(popupState)}>
-              <MenuItem
-                onClick={(popupState.close, changeStatus)}
-                defaultValue="Reconciled"
-              >
-                Reconcile
-              </MenuItem>
-              <MenuItem
-                onClick={(popupState.close, changeStatus)}
-                defaultValue="Rejected"
-              >
-                Reject
-              </MenuItem>
-            </Menu>
-          </React.Fragment>
-        )}
-      </PopupState>
-    );
-  }
-
+   
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -631,41 +480,47 @@ function MultilineTextViews(dt) {
       id: "name",
       numeric: false,
       disablePadding: true,
-      label: "Discrepency ID"
+      label: "Discrepency ID",
+      align: "center"
     },
     {
       id: "stripe_id",
       numeric: true,
       disablePadding: false,
-      label: "Stripe Charge Id"
+      label: "Stripe Charge Id",
+      align: "center"
     },
-    { id: "status", numeric: true, disablePadding: false, label: "Status" },
-    { id: "notes", numeric: true, disablePadding: false, label: "Notes" },
+    { id: "status", numeric: true, disablePadding: false, label: "Status", align: "center" },
+    { id: "notes", numeric: true, disablePadding: false, label: "Notes" , align: "center"},
     {
       id: "description",
       numeric: true,
       disablePadding: false,
-      label: "Description"
+      label: "Description" ,
+       align: "center"
     },
     {
       id: "amount_stripe",
       numeric: true,
       disablePadding: false,
-      label: "Amount Stripe"
+      label: "Amount Stripe", 
+      align: "center"
     },
     {
       id: "amount_fd",
       numeric: true,
       disablePadding: false,
-      label: "Amount FD"
+      label: "Amount FD", 
+      align: "center"
     },
     {
       id: "amount_dis",
       numeric: true,
       disablePadding: false,
-      label: "Amount Discrepency"
+      label: "Amount Discrepency", 
+      align: "center"
     },
-    { id: "date", numeric: true, disablePadding: false, label: "Date" }
+    { id: "date", numeric: true, disablePadding: false, label: "Date" , align: "center"}
   ];
 
   function EnhancedTableHead(props) {
@@ -826,7 +681,16 @@ function MultilineTextViews(dt) {
     }
     setSelected([]);
   };
+  const onChangeGetData=()=>{
+    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
+        res.json().then(data=>{
+        console.log("Rows: "+data.data)
+         setRows(data.data)
+         
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)}) 
 
+  }
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -891,9 +755,8 @@ function MultilineTextViews(dt) {
                         {row.stripe_charge_id}
                       </TableCell>
                       <TableCell align="center">
-                        {row.status}{" "}
                         <MenuPopupState
-                          dt={{ id: row.discrepency_id, status: row.status }}
+                          dt={{ id: row.discrepency_id, status: row.status }}  
                         />
                       </TableCell>
                       <TableCell align="center">
@@ -904,9 +767,8 @@ function MultilineTextViews(dt) {
                       <TableCell align="center">{row.description}</TableCell>
                       <TableCell align="center">{row.stripe_amount}</TableCell>
                       <TableCell align="center">{row.fd_amount}</TableCell>
-                      <TableCell align="center">
-                        {row.desrepency_amount}
-                      </TableCell>
+                      <TableCell align="center">{row.desrepency_amount}</TableCell>
+                      <TableCell align="center">{row.date}</TableCell>
                       <TableCell padding="" />
                     </TableRow>
                   );
@@ -937,3 +799,65 @@ function MultilineTextViews(dt) {
   );
 }
 
+function MenuPopupState(dt) {
+  const[status,setStatus]=React.useState(dt.dt.status)
+  const changeStatus= (event)=>{
+   
+    if(event.nativeEvent.target.outerText=='Reconcile'){
+      fetch('http://localhost:8080/updateStatus',{
+    method: 'POST',
+    headers: new Headers({'Content-Type': 'application/json'}),
+    body: JSON.stringify({"id": dt.dt.id , "status": 'reconciled'})
+  }).then(res=>{
+    setStatus('reconciled')
+    res.json().then(data=>{
+      console.log("Status: "+data)
+    }).catch(err=>{console.error(err.message)})
+  }).catch(err=>{console.error(err.message)})
+      
+      console.log('Status: reconciled')
+    }
+    else if(event.nativeEvent.target.outerText=='Reject'){
+  
+      fetch('http://localhost:8080/updateStatus',{
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+        body: JSON.stringify({"id": dt.dt.id , "status": 'rejected'})
+      }).then(res=>{
+        res.json().then(data=>{
+         setStatus('rejected')
+         console.log("Id: "+ dt.dt.id)
+          console.log("Status: " +JSON.stringify(data))
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)})
+      console.log('Status: rejected')
+    }
+    else{
+      setStatus('new')
+      console.log('Status: new')
+    }
+    console.log(dt)
+
+   }
+  
+
+  return (
+    <div>
+    <Typography>{status}</Typography>
+    <PopupState variant="popover" popupId="demo-popup-menu">
+      {popupState => (
+        <React.Fragment>
+          <Button variant="contained" color="default" {...bindTrigger(popupState)} >
+            action
+          </Button>
+          <Menu {...bindMenu(popupState)}>
+            <MenuItem onClick={popupState.close,changeStatus} defaultValue='Reconciled'>Reconcile</MenuItem>
+            <MenuItem onClick={popupState.close,changeStatus} defaultValue='Rejected'>Reject</MenuItem>
+          </Menu>
+        </React.Fragment>
+      
+      )}
+    </PopupState>
+    </div>
+  );
+}

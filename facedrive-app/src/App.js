@@ -19,7 +19,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import fetch, { Request } from 'node-fetch';
+import { DropzoneDialog } from "material-ui-dropzone";
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import fs from 'fs';
 
 
 function App() {  
@@ -39,7 +41,7 @@ function DbApp(){
     const[currentDate, setCurrentDate] = React.useState(' ')
     const[endDate, setEndDate] = React.useState(visibleDate(' '))
     const[startDate, setStartDate] = React.useState(visibleDate(' '))
-    const[rows,setRows]= React.useState([{}]) 
+    const[rows,setRows]= React.useState([{"discrepency_id":671,"stripe_charge_id":"txn_1GB97yEG0OJcP9w4XBXYyQMt","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"8.48","fd_amount":"848","desrepency_amount":"840","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":672,"stripe_charge_id":"txn_1GB9I7EG0OJcP9w4OmsIon2S","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"-1.37","fd_amount":"363","desrepency_amount":"364","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":673,"stripe_charge_id":"txn_1GB9I7EG0OJcP9w40HkizGbD","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"5","fd_amount":"363","desrepency_amount":"358","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":695,"stripe_charge_id":"txn_1GB8qrEG0OJcP9w4CLjbbEZT","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"6.7","fd_amount":"670","desrepency_amount":"663","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":696,"stripe_charge_id":"txn_1GB97nEG0OJcP9w4QvpRpcRW","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"-1.1","fd_amount":"390","desrepency_amount":"391","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":697,"stripe_charge_id":"txn_1GB97nEG0OJcP9w4SZVbu1ID","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"5","fd_amount":"390","desrepency_amount":"385","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":698,"stripe_charge_id":"txn_1GB9N1EG0OJcP9w4zO819znw","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"6.74","fd_amount":"674","desrepency_amount":"667","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":699,"stripe_charge_id":"txn_1GB9SAEG0OJcP9w4ymeAuROe","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"-2.41","fd_amount":"259","desrepency_amount":"261","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":700,"stripe_charge_id":"txn_1GB9SAEG0OJcP9w4eKSvT0h1","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"5","fd_amount":"259","desrepency_amount":"254","date":"2020-02-13T05:00:00.000Z"}]) 
     const[status,setStatus]=React.useState('new')
      
   
@@ -78,7 +80,7 @@ function DbApp(){
       fetch(new Request('http://localhost:8080/minDate')).then(res=>{
         res.json().then(data=>{
           console.log("Min date: " +data.data)
-           setStartDate(data.data)
+           setStartDate(visibleDate(data.data))
         })
       }).catch(err=>{console.error(err.message)})
       
@@ -86,16 +88,27 @@ function DbApp(){
         res.json().then(data=>{
           console.log("Max date: "+data.data)
            setCurrentDate(visibleDate(data.data))
-           setEndDate(data.data)
+           setEndDate(visibleDate(data.data))
           
         })
       }).catch(err=>{console.error(err.message)})
 
-      fetch(new Request('http://localhost:8080/getAll')).then(res=>{
+     /* fetch(new Request('http://localhost:8080/getAll')).then(res=>{
         res.json().then(data=>{
         console.log("Rows: "+data.data)
          //setRows(data.data)
          //setRows([{}])
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)}) */
+      fetch('http://localhost:8080/dt1',{
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+        //body: JSON.stringify({"startDate": startDate, "endDate": endDate})
+        body: JSON.stringify({"startDate": '2020-02-10T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
+      }).then(res=>{
+        res.json().then(data=>{
+            console.log("Dt1 : "+ data)
+            //  setRows(data.data)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)}) 
       
@@ -106,12 +119,13 @@ function DbApp(){
       fetch('http://localhost:8080/dt1',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"startDate": startDate, "endDate": endDate})
+        //body: JSON.stringify({"startDate": startDate, "endDate": endDate})
+        body: JSON.stringify({"startDate": '2020-02-10T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
       }).then(res=>{
         res.json().then(data=>{
 
             console.log("Dt1 : "+ data)
-              //setRows(data.data)
+            //  setRows(data.data)
           
            
         }).catch(err=>{console.error(err.message)})
@@ -187,9 +201,15 @@ function DbApp(){
       <Box m={1} />
         <Typography>FaceDrive: App vs. Stripe Reconciliation</Typography>
         <box m={3}></box>
-        <Box m={1} border= {3}>
+        <Box m={1}>
         <Typography>Disrepency Table has been updated to: {currentDate}</Typography>
         </Box>
+        <Box  m={3}  > 
+        <Grid container direction="row" justify="center" alignItems="center">
+        <Typography>Upload Stripe Sheet: </Typography>
+        <Box m={1}></Box>
+         <DropzoneFileUpload></DropzoneFileUpload> 
+         </Grid></Box>
         <box m={3}>
         <Typography>Identify Desrepencies: </Typography> 
         </box>
@@ -240,7 +260,79 @@ function DbApp(){
   }
   
 
+  export function DropzoneFileUpload() {
+    const initialState = {
+      open: false,
+      files: []
+    };
+    const [state, setState] = React.useState(initialState);
+  
+    const handleOpen = () => {
+      setState({
+        ...state,
+        open: true
+      });
+    };
+  
+    const handleClose = () => {
+      setState({
+        ...state,
+        open: false
+      });
+    };
+  
+    const handleSave = files => {
+      setState({
+        ...state,
+        files: files,
+        open: false
+      });
+        
+       
 
+      fetch(new Request('http://localhost:8080/newData',{
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+        body: JSON.stringify({file: files[0]})
+      })).then(res=>{
+        res.json().then(data=>{
+        console.log("File upload: "+data.data)
+        }).catch(err=>{console.error("File upload failed" + err.message)})
+      }).catch(err=>{console.error("File upload failed" +err.message)})
+
+  
+  }
+
+    
+    
+  
+    return (
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={handleOpen}
+        >
+          Add Data
+        </Button>
+        <DropzoneDialog
+          open={state.open}
+          onSave={handleSave}
+          accept=".xlsx"
+          showPreviews={true}
+          maxFileSize={5000000}
+          onClose={handleClose}
+          cancelButtonText={"Cancel"}
+          submitButtonText={"Upload"}
+          showFileNamesInPreview={true}
+          dialogTitle={"stripe data sheet"}
+          dropzoneText={"Upload"}
+        />
+      </div>
+    );
+  }
+  
 // e.g: dt={{id: "1", data: "ll" }}
 function SimplePopover(dt) {
   const useStyles = makeStyles(theme => ({

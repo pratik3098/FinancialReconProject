@@ -68,11 +68,24 @@ exports.readFCDataFromExcel= async function(){
   })  
 
     console.log("Data inserted into facedrive successfully")
-
 }
+
+
 
 exports.readSTDataFromExcel= async function(){
     let stripeFile = xlsx.readFile(path.resolve(__dirname,config.stripeFilePath))
+    
+    // JSON Arrays of the sheet data
+    let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
+    stripeData.forEach(res =>{
+    let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
+    Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
+    }) 
+    console.log("Data inserted into Stripe successfully")
+}
+
+exports.readSTData= async function(file){
+    let stripeFile = xlsx.readFile(file.path)
     
     // JSON Arrays of the sheet data
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
@@ -148,9 +161,6 @@ this.connectToDb().catch(err=>{console.error(err.message)})
 //console.log(res)
 
 //this.updateStatus(1, 'reconciled').catch(err=>{console.log(err)})
-<<<<<<< HEAD
 //this.getRideInfo('1').then(res=>{console.log(res)}).catch(err=>{console.log(err)})
-=======
 //this.getAllData().then(res=>{console.log(res)}).catch(err=>{console.log(err.message)})
 //console.log(condateFormat('2020-02-12T05:00:00.000Z'))
->>>>>>> 977bed195d0fdb1f82fb4b6d7c0c11ee8a62b378

@@ -142,3 +142,21 @@ app.post('/updateStatus',(req,res)=>{
        res.redirect('/')
 })
 
+app.post('/newData',(req,res)=>{
+    if(db.isConnected){
+      console.log(req.body.file)
+    db.readSTData(req.body.file).then(res1=>{
+       console.log("File upload:" +req.body.file)
+       console.log("File upload: "+ res1)
+        return res.status(200).send({
+            success: 'true',
+            data: result
+        })
+    }).catch(err=>{console.error(err.message)
+        return res.status(404).send({
+            success: 'false',
+            message: err.message
+        })})
+    }else
+      redirect('/')
+})

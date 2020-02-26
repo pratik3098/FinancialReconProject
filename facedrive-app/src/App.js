@@ -46,9 +46,6 @@ export default function App() {
 
 function DbApp(){
     const[currentDate, setCurrentDate] = React.useState(' ')
-    const[endDate, setEndDate] = React.useState(visibleDate(' '))
-    const[startDate, setStartDate] = React.useState(visibleDate(' '))
-    const[rows,setRows]= React.useState([{}]) 
     const[status,setStatus]=React.useState('new')
      
   
@@ -65,13 +62,7 @@ function DbApp(){
     }).catch(err=>{console.error(err.message)})
   
   
-    const onChangeSetStart=(event)=>{
-        setStartDate(event.target.value)
-    }
-    
-    const onChangeSetEnd=(event)=>{
-     setEndDate(event.target.value)
-    }
+ 
   
     
     const useStyles = makeStyles(theme => ({
@@ -83,43 +74,6 @@ function DbApp(){
       },
     }));
     const classes = useStyles();
-    React.useEffect(()=>{
-      fetch(new Request('http://localhost:8080/minDate')).then(res=>{
-        res.json().then(data=>{
-          console.log("Min date: " +data.data)
-           setStartDate(visibleDate(data.data))
-        })
-      }).catch(err=>{console.error(err.message)})
-      
-      fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
-        res.json().then(data=>{
-          console.log("Max date: "+data.data)
-           setCurrentDate(visibleDate(data.data))
-           setEndDate(visibleDate(data.data))
-          
-        })
-      }).catch(err=>{console.error(err.message)})
-
-     },[])
-
-
-    React.useEffect(()=>{
-      fetch('http://localhost:8080/dt1',{
-        method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
-        //body: JSON.stringify({"startDate": startDate, "endDate": endDate})
-        body: JSON.stringify({"startDate": '2020-02-10T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
-      }).then(res=>{
-        res.json().then(data=>{
-
-            console.log("Dt1 : "+ data)
-            //  setRows(data.data)
-          
-           
-        }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)}) 
-    
-    },[startDate,endDate,status])
 
   
     
@@ -140,12 +94,6 @@ function DbApp(){
         <box m={3}>
         <Typography>Identify Desrepencies: </Typography> 
         </box>
-        <div>
-        <TextField  id="start-datetime" label="Start Date" type="datetime-local" value={startDate} onChange={onChangeSetStart} > </TextField>
-        <box m={1}>
-        <TextField  id="end-datetime" label="End Date" type="datetime-local" value={endDate} onChange={onChangeSetEnd}> </TextField> 
-        </box>
-        </div>
         <div>
         <EnhancedTable dt={[{}]}></EnhancedTable>
         </div>
@@ -436,9 +384,32 @@ function MultilineTextViews(dt) {
 
 
  function EnhancedTable() {
+  const[endDate, setEndDate] = React.useState(visibleDate(' '))
+    const[startDate, setStartDate] = React.useState(visibleDate(' '))
+    const[rows,setRows]= React.useState([{}]) 
+    function visibleDate(dt){
+      return (dt.substring(0,10)+"T" + dt.substring(11,16))
+   }
    
-  const [rows, setRows] = React.useState([{}]);
-  React.useState(()=>{
+    function backendDate(dt){
+      return(dt+':00.000Z')
+    }
+  React.useEffect(()=>{
+    fetch(new Request('http://localhost:8080/minDate')).then(res=>{
+      res.json().then(data=>{
+        console.log("Min date: " +data.data)
+         setStartDate(visibleDate(data.data))
+      })
+    }).catch(err=>{console.error(err.message)})
+    
+    fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
+      res.json().then(data=>{
+        console.log("Max date: "+data.data)
+         setEndDate(visibleDate(data.data))
+        
+      })
+    }).catch(err=>{console.error(err.message)})
+
     fetch(new Request('http://localhost:8080/getAll')).then(res=>{
         res.json().then(data=>{
         console.log("Rows: "+data.data)
@@ -446,7 +417,34 @@ function MultilineTextViews(dt) {
          
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)}) 
-  },[])
+
+   },[])
+
+   React.useEffect(()=>{
+    fetch('http://localhost:8080/dt1',{
+      method: 'POST',
+      headers: new Headers({'Content-Type': 'application/json'}),
+      body: JSON.stringify({"startDate": backendDate(startDate), "endDate": backendDate(endDate)})
+     // body: JSON.stringify({"startDate": '2020-02-10T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
+    }).then(res=>{
+      res.json().then(data=>{
+
+          console.log("Dt1 : "+ JSON.stringify(data.data))
+          if(Boolean(data.data))
+            setRows(data.data)
+        
+         
+      }).catch(err=>{console.error(err.message)})
+    }).catch(err=>{console.error(err.message)}) 
+   },[startDate,endDate])
+
+   const onChangeSetStart=(event)=>{
+    setStartDate(visibleDate(event.target.value))
+}
+
+const onChangeSetEnd=(event)=>{
+ setEndDate(visibleDate(event.target.value))
+}
   
    
 
@@ -606,6 +604,7 @@ function MultilineTextViews(dt) {
     const { numSelected } = props;
 
     return (
+     
       <Toolbar
         className={clsx(classes.root, {
           [classes.highlight]: numSelected > 0
@@ -620,6 +619,8 @@ function MultilineTextViews(dt) {
             {numSelected} selected
           </Typography>
         ) : (
+          <Grid container direction="column" justify="center" alignItems="center">
+          
           <Typography
             className={classes.title}
             variant="h6"
@@ -628,6 +629,13 @@ function MultilineTextViews(dt) {
           >
             Facedrive Vs Stripe Disrepency
           </Typography>
+          <div>
+          <TextField  id="start-datetime" label="Start Date" type="datetime-local" value={startDate} onChange={onChangeSetStart}  > </TextField>
+          <box m={1}>
+          <TextField  id="end-datetime" label="End Date" type="datetime-local" value={endDate} onChange={onChangeSetEnd}> </TextField> 
+          </box>
+          </div>
+          </Grid>
         )}
       </Toolbar>
     );

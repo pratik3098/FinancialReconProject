@@ -146,6 +146,10 @@ exports.getAllData= async function (){
     let result = await sql.query(queries.getAllfromData).catch(err=>{console.log(err.message)})
     return result.rows
 }
+
+function dateOps1(dt){
+    console.log(dt.substring(0,10)+"T" + dt.substring(11,16))
+}
 //this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
@@ -164,3 +168,4 @@ exports.getAllData= async function (){
 //this.getRideInfo('1').then(res=>{console.log(res)}).catch(err=>{console.log(err)})
 //this.getAllData().then(res=>{console.log(res)}).catch(err=>{console.log(err.message)})
 //console.log(condateFormat('2020-02-12T05:00:00.000Z'))
+//dateOps1('2020-02-12T05:00:00.000Z')

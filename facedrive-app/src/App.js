@@ -192,6 +192,7 @@ function DbApp(){
               <TableCell>Discrepency ID</TableCell>
               <TableCell align="center">Stripe Charge ID</TableCell>
               <TableCell align="center">Status</TableCell>
+              <TableCell align="center">Notes</TableCell>
               <TableCell align="center">Description </TableCell>
               <TableCell align="center">Amount Stripe</TableCell>
               <TableCell align="center">Amount FD</TableCell>
@@ -205,6 +206,7 @@ function DbApp(){
                 <TableCell component="th" scope="row"><SimplePopover dt={{id: row.discrepency_id, notes: row.notes }}></SimplePopover></TableCell>
                 <TableCell align="center">{row.stripe_charge_id}</TableCell>
                 <TableCell align="center" >{row.status} <MenuPopupState dt={{id: row.discrepency_id, status: row.status}} ></MenuPopupState></TableCell>
+                <TableCell align="center"><SimplePopoverForNotes dt={{id: row.discrepency_id, notes: row.notes }}></SimplePopoverForNotes></TableCell>
                 <TableCell align="center">{row.description}</TableCell>
                 <TableCell align="center">{row.stripe_amount}</TableCell>
                 <TableCell align="center">{row.fd_amount}</TableCell>
@@ -223,7 +225,8 @@ function DbApp(){
   }
   
 
-// e.g: dt={{id: "1", notes: "My notes" }}
+
+// e.g: dt={{id: "1", data: "ll" }}
 function SimplePopover(dt) {
   const useStyles = makeStyles(theme => ({
     typography: {
@@ -267,8 +270,60 @@ function SimplePopover(dt) {
           vertical: "top",
           horizontal: "center"
         }}
+      > 
+        <MultilineTextViews dt={dt.dt}></MultilineTextViews>
+      </Popover>
+    </div>
+  );
+}
+
+// e.g: dt={{id: "1", data: "ll" }}
+function SimplePopoverForNotes(dt) {
+  const useStyles = makeStyles(theme => ({
+    typography: {
+      padding: theme.spacing(2)
+    }
+  }));
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  return (
+    <div>
+      <Button
+        aria-describedby={id}
+        variant="contained"
+        color="default"
+        onClick={handleClick}
       >
-        <MultilineTextFields dt={dt.dt} />
+        Update
+      </Button>
+   
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center"
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center"
+        }}
+      > 
+        <MultilineTextFields dt={dt.dt}></MultilineTextFields>
       </Popover>
     </div>
   );
@@ -316,6 +371,48 @@ function MultilineTextFields(dt) {
           variant="outlined"
           onChange={updateNotes}
         />
+      </div>
+    </form>
+  );
+}
+
+function MultilineTextViews(dt) {
+  const [notes, setNotes] = React.useState(dt.dt.data);
+  const [ ride_id ,setRideId]= React.useState('xxxxx-xxxx-xxxx')
+  const [ride_created, setRideCreated]= React.useState('2020-02-12T05:00:00.000Z')
+  const useStyles = makeStyles(theme => ({
+    root: {
+      "& .MuiTextField-root": {
+        margin: theme.spacing(1),
+        width: 200
+      }
+    }
+  }));
+   
+    fetch('http://localhost:8080/mindate',{
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+        body: JSON.stringify({"id": dt.dt.id , "notes": notes})
+      }).then(res=>{
+        res.json().then(data=>{
+          console.log("Notes: " + data)
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)})
+  
+  const classes = useStyles();
+  const [value, setValue] = React.useState("Controlled");
+
+  const handleChange = event => {
+    setValue(event.target.value);
+  };
+
+  return (
+    <form className={classes.root} noValidate autoComplete="off">
+      <div>
+        <Typography>User Name:    John Snow</Typography>
+        <Typography>User email:   abc@xyz.com</Typography>
+        <Typography>Ride Created: {ride_created}</Typography>
+        <Typography>Ride Id:      {ride_id}</Typography>
       </div>
     </form>
   );

@@ -92,5 +92,6 @@ exports.updateDesrBoth = `update disrepency set  Description = 'exists in none',
 exports.updateDesrNone = `update disrepency set  Description = 'no disrepency', Status='new' where ((Stripe_Amount - FD_Amount) = 0) and (Stripe_Amount IS Not NULL) and (FD_AMOUNT is NOT NULL);`
 
 
-exports.getUSerDetails=`select ride_id , ride_created from facedrive, ;`
+exports.getUSerDetails1=`select ride_id, ride_created from facedrive, (select source from stripe Inner join  disrepency on stripe.id = disrepency.stripe_charge_id where discrepency_id = `
+exports.getUSerDetails2=`) as str_id where facedrive.stripe_reserve_charge_id = CAST( str_id as VARCHAR(28));`
 

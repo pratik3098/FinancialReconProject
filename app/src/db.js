@@ -118,9 +118,8 @@ exports.updateStatus= async function(Id, status){
     await sql.query(queries.updateStatustonew+Id+queries.close).catch(err=>{console.log(err.message)})
 }
 exports.getRideInfo= async function(id){
-   id ="\'"+id+"\'"
-   let result =await sql.query(queries.getUSerDetails)
-   return result.rows
+   let result =await sql.query(queries.getUSerDetails1+ id + queries.getUSerDetails2)
+   return result.rows[0]
 }
 
 exports.getMaxDate=async function(){
@@ -147,7 +146,7 @@ exports.getAllData= async function (){
     let result = await sql.query(queries.getAllfromData).catch(err=>{console.log(err.message)})
     return result.rows
 }
-this.connectToDb().catch(err=>{console.error(err.message)})
+//this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})

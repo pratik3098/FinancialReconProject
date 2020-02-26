@@ -392,9 +392,8 @@ function MultilineTextFields(dt) {
 }
 
 function MultilineTextViews(dt) {
-  const [notes, setNotes] = React.useState(dt.dt.data);
-  const [ ride_id ,setRideId]= React.useState('xxxxx-xxxx-xxxx')
-  const [ride_created, setRideCreated]= React.useState('2020-02-12T05:00:00.000Z')
+  const [ ride_id ,setRideId]= React.useState(' ')
+  const [ride_created, setRideCreated]= React.useState(' ')
   const useStyles = makeStyles(theme => ({
     root: {
       "& .MuiTextField-root": {
@@ -404,13 +403,15 @@ function MultilineTextViews(dt) {
     }
   }));
    
-    fetch('http://localhost:8080/mindate',{
+    fetch('http://localhost:8080/rideInfo',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({"id": dt.dt.id , "notes": notes})
+        body: JSON.stringify({"id": dt.dt.id })
       }).then(res=>{
         res.json().then(data=>{
           console.log("Notes: " + data)
+          setRideId(data.ride_id)
+          setRideCreated(data.data.ride_created)
         }).catch(err=>{console.error(err.message)})
       }).catch(err=>{console.error(err.message)})
   

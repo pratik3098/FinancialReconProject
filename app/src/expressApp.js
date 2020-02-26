@@ -148,7 +148,24 @@ app.post('/newData',(req,res)=>{
     db.readSTData(req.body.file).then(res1=>{
         return res.status(200).send({
             success: 'true',
-            data: result
+            data: res1
+        })
+    }).catch(err=>{console.error(err.message)
+        return res.status(404).send({
+            success: 'false',
+            message: err.message
+        })})
+    }else
+      redirect('/')
+})
+
+app.post('/rideInfo',(req,res)=>{
+    if(db.isConnected){
+    db.getRideInfo(req.body.id).then(res1=>{
+        console.log("Ride info for id: " + req.body.id + " " +JSON.stringify(res1))
+        return res.status(200).send({
+            success: 'true',
+            data: res1
         })
     }).catch(err=>{console.error(err.message)
         return res.status(404).send({

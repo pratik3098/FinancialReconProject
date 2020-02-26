@@ -22,6 +22,7 @@ import fetch, { Request } from 'node-fetch';
 import { DropzoneDialog } from "material-ui-dropzone";
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import fs from 'fs';
+import { resolve } from 'dns';
 
 
 function App() {  
@@ -260,12 +261,15 @@ function DbApp(){
   }
   
 
-  export function DropzoneFileUpload() {
+  function DropzoneFileUpload() {
     const initialState = {
       open: false,
       files: []
     };
     const [state, setState] = React.useState(initialState);
+    const [result, setResult]=React.useState(true)
+    const [accepted, setAccepted]=React.useState(0)
+    const [notAccepted, setNotAccepted]= React.useState(0)
   
     const handleOpen = () => {
       setState({
@@ -287,16 +291,17 @@ function DbApp(){
         files: files,
         open: false
       });
-        
-       
 
+      console.log(files[0])
+     
       fetch(new Request('http://localhost:8080/newData',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({file: files[0]})
       })).then(res=>{
         res.json().then(data=>{
-        console.log("File upload: "+data.data)
+      //  console.log("File upload: "+data.data)
+         setResult(false)
         }).catch(err=>{console.error("File upload failed" + err.message)})
       }).catch(err=>{console.error("File upload failed" +err.message)})
 
@@ -308,6 +313,8 @@ function DbApp(){
   
     return (
       <div>
+        <Grid container direction="row" justify="center" alignItems="center">
+        <Box m={3}>
         <Button
           variant="contained"
           color="primary"
@@ -329,6 +336,12 @@ function DbApp(){
           dialogTitle={"stripe data sheet"}
           dropzoneText={"Upload"}
         />
+        </Box>
+        <box m={3}> 
+      <Typography hidden={result}> Entries updated: {accepted}</Typography> 
+      <Typography hidden={result}> Entries rejected: {notAccepted}</Typography>
+        </box>
+        </Grid>
       </div>
     );
   }

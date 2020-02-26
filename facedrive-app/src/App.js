@@ -7,13 +7,6 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import  {makeStyles} from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -21,11 +14,24 @@ import Popover from '@material-ui/core/Popover';
 import fetch, { Request } from 'node-fetch';
 import { DropzoneDialog } from "material-ui-dropzone";
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import fs from 'fs';
-import { resolve } from 'dns';
+import PropTypes from "prop-types";
+import clsx from "clsx";
+import { lighten, makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Toolbar from "@material-ui/core/Toolbar";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 
-function App() {  
+
+export default function App() {  
 
   document.title = "Facedrive App"
   return (
@@ -42,7 +48,7 @@ function DbApp(){
     const[currentDate, setCurrentDate] = React.useState(' ')
     const[endDate, setEndDate] = React.useState(visibleDate(' '))
     const[startDate, setStartDate] = React.useState(visibleDate(' '))
-    const[rows,setRows]= React.useState([{"discrepency_id":671,"stripe_charge_id":"txn_1GB97yEG0OJcP9w4XBXYyQMt","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"8.48","fd_amount":"848","desrepency_amount":"840","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":672,"stripe_charge_id":"txn_1GB9I7EG0OJcP9w4OmsIon2S","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"-1.37","fd_amount":"363","desrepency_amount":"364","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":673,"stripe_charge_id":"txn_1GB9I7EG0OJcP9w40HkizGbD","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"5","fd_amount":"363","desrepency_amount":"358","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":695,"stripe_charge_id":"txn_1GB8qrEG0OJcP9w4CLjbbEZT","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"6.7","fd_amount":"670","desrepency_amount":"663","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":696,"stripe_charge_id":"txn_1GB97nEG0OJcP9w4QvpRpcRW","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"-1.1","fd_amount":"390","desrepency_amount":"391","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":697,"stripe_charge_id":"txn_1GB97nEG0OJcP9w4SZVbu1ID","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"5","fd_amount":"390","desrepency_amount":"385","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":698,"stripe_charge_id":"txn_1GB9N1EG0OJcP9w4zO819znw","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"6.74","fd_amount":"674","desrepency_amount":"667","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":699,"stripe_charge_id":"txn_1GB9SAEG0OJcP9w4ymeAuROe","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"-2.41","fd_amount":"259","desrepency_amount":"261","date":"2020-02-13T05:00:00.000Z"},{"discrepency_id":700,"stripe_charge_id":"txn_1GB9SAEG0OJcP9w4eKSvT0h1","status":"new","description":"amount mis-match","notes":" ","stripe_amount":"5","fd_amount":"259","desrepency_amount":"254","date":"2020-02-13T05:00:00.000Z"}]) 
+    const[rows,setRows]= React.useState([{}]) 
     const[status,setStatus]=React.useState('new')
      
   
@@ -94,25 +100,6 @@ function DbApp(){
         })
       }).catch(err=>{console.error(err.message)})
 
-     /* fetch(new Request('http://localhost:8080/getAll')).then(res=>{
-        res.json().then(data=>{
-        console.log("Rows: "+data.data)
-         //setRows(data.data)
-         //setRows([{}])
-        }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)}) */
-      fetch('http://localhost:8080/dt1',{
-        method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
-        //body: JSON.stringify({"startDate": startDate, "endDate": endDate})
-        body: JSON.stringify({"startDate": '2020-02-10T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
-      }).then(res=>{
-        res.json().then(data=>{
-            console.log("Dt1 : "+ data)
-            //  setRows(data.data)
-        }).catch(err=>{console.error(err.message)})
-      }).catch(err=>{console.error(err.message)}) 
-      
      },[])
 
 
@@ -134,8 +121,6 @@ function DbApp(){
     
     },[startDate,endDate,status])
 
-   
-  
     function MenuPopupState(dt) {
       const changeStatus= (event)=>{
        
@@ -176,6 +161,8 @@ function DbApp(){
         console.log(dt)
    
        }
+      
+
     
       return (
         <PopupState variant="popover" popupId="demo-popup-menu">
@@ -199,9 +186,6 @@ function DbApp(){
      return(
        <div>
       <Grid container direction="column" justify="center" alignItems="center">
-      <Box m={1} />
-        <Typography>FaceDrive: App vs. Stripe Reconciliation</Typography>
-        <box m={3}></box>
         <Box m={1}>
         <Typography>Disrepency Table has been updated to: {currentDate}</Typography>
         </Box>
@@ -221,38 +205,7 @@ function DbApp(){
         </box>
         </div>
         <div>
-        <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Discrepency ID</TableCell>
-              <TableCell align="center">Stripe Charge ID</TableCell>
-              <TableCell align="center">Status</TableCell>
-              <TableCell align="center">Notes</TableCell>
-              <TableCell align="center">Description </TableCell>
-              <TableCell align="center">Amount Stripe</TableCell>
-              <TableCell align="center">Amount FD</TableCell>
-              <TableCell align="center">Amount Discrepency</TableCell>
-              <TableCell align="center">Date</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.discrepency_id}>
-                <TableCell component="th" scope="row"><SimplePopover dt={{id: row.discrepency_id, notes: row.notes }}></SimplePopover></TableCell>
-                <TableCell align="center">{row.stripe_charge_id}</TableCell>
-                <TableCell align="center" >{row.status} <MenuPopupState dt={{id: row.discrepency_id, status: row.status}} ></MenuPopupState></TableCell>
-                <TableCell align="center"><SimplePopoverForNotes dt={{id: row.discrepency_id, notes: row.notes }}></SimplePopoverForNotes></TableCell>
-                <TableCell align="center">{row.description}</TableCell>
-                <TableCell align="center">{row.stripe_amount}</TableCell>
-                <TableCell align="center">{row.fd_amount}</TableCell>
-                <TableCell align="center">{row.desrepency_amount}</TableCell>
-                <TableCell align="center">{row.date}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <EnhancedTable dt={[{}]}></EnhancedTable>
         </div>
       </Grid>
   
@@ -539,4 +492,448 @@ function MultilineTextViews(dt) {
 }
 
 
-export default App;
+ function EnhancedTable() {
+   
+  const [rows, setRows] = React.useState([{}]);
+  const [status,setStatus]=React.useState('new')
+  React.useState(()=>{
+    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
+        res.json().then(data=>{
+        console.log("Rows: "+data.data)
+         setRows(data.data)
+         
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)}) 
+  },[])
+  React.useState(()=>{
+    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
+        res.json().then(data=>{
+        console.log("Rows: "+data.data)
+         setRows(data.data)
+         
+        }).catch(err=>{console.error(err.message)})
+      }).catch(err=>{console.error(err.message)}) 
+  },[status])
+  
+  function MenuPopupState(dt) {
+    const changeStatus = event => {
+      if (event.nativeEvent.target.outerText == "Reconcile") {
+        fetch("http://localhost:8080/updateStatus", {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          body: JSON.stringify({ id: dt.dt.id, status: "reconciled" })
+        })
+          .then(res => {
+            setStatus("reconciled");
+            dt.dt.status = "reconciled";
+            res
+              .json()
+              .then(data => {
+                console.log("Status: " + data);
+              })
+              .catch(err => {
+                console.error(err.message);
+              });
+          })
+          .catch(err => {
+            console.error(err.message);
+          });
+
+        console.log("Status: reconciled");
+      } else if (event.nativeEvent.target.outerText == "Reject") {
+        fetch("http://localhost:8080/updateStatus", {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          body: JSON.stringify({ id: dt.dt.id, status: "rejected" })
+        })
+          .then(res => {
+            res
+              .json()
+              .then(data => {
+                setStatus("rejected");
+                dt.dt.status = "rejected";
+                console.log("Status: " + data);
+              })
+              .catch(err => {
+                console.error(err.message);
+              });
+          })
+          .catch(err => {
+            console.error(err.message);
+          });
+        console.log("Status: rejected");
+      } else {
+        setStatus("new");
+        console.log("Status: new");
+      }
+      console.log(dt);
+    };
+    return (
+      <PopupState variant="popover" popupId="demo-popup-menu">
+        {popupState => (
+          <React.Fragment>
+            <Button
+              variant="contained"
+              color="default"
+              {...bindTrigger(popupState)}
+            >
+              action
+            </Button>
+            <Menu {...bindMenu(popupState)}>
+              <MenuItem
+                onClick={(popupState.close, changeStatus)}
+                defaultValue="Reconciled"
+              >
+                Reconcile
+              </MenuItem>
+              <MenuItem
+                onClick={(popupState.close, changeStatus)}
+                defaultValue="Rejected"
+              >
+                Reject
+              </MenuItem>
+            </Menu>
+          </React.Fragment>
+        )}
+      </PopupState>
+    );
+  }
+
+
+  function descendingComparator(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
+  }
+
+  function getComparator(order, orderBy) {
+    return order === "desc"
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+  }
+
+  function stableSort(array, comparator) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    return stabilizedThis.map(el => el[0]);
+  }
+
+  const headCells = [
+    {
+      id: "name",
+      numeric: false,
+      disablePadding: true,
+      label: "Discrepency ID"
+    },
+    {
+      id: "stripe_id",
+      numeric: true,
+      disablePadding: false,
+      label: "Stripe Charge Id"
+    },
+    { id: "status", numeric: true, disablePadding: false, label: "Status" },
+    { id: "notes", numeric: true, disablePadding: false, label: "Notes" },
+    {
+      id: "description",
+      numeric: true,
+      disablePadding: false,
+      label: "Description"
+    },
+    {
+      id: "amount_stripe",
+      numeric: true,
+      disablePadding: false,
+      label: "Amount Stripe"
+    },
+    {
+      id: "amount_fd",
+      numeric: true,
+      disablePadding: false,
+      label: "Amount FD"
+    },
+    {
+      id: "amount_dis",
+      numeric: true,
+      disablePadding: false,
+      label: "Amount Discrepency"
+    },
+    { id: "date", numeric: true, disablePadding: false, label: "Date" }
+  ];
+
+  function EnhancedTableHead(props) {
+    const {
+      classes,
+      onSelectAllClick,
+      order,
+      orderBy,
+      numSelected,
+      rowCount,
+      onRequestSort
+    } = props;
+    const createSortHandler = property => event => {
+      onRequestSort(event, property);
+    };
+
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell padding="" />
+          {headCells.map(headCell => (
+            <TableCell
+              key={headCell.id}
+              align={headCell.numeric ? "right" : "left"}
+              padding={headCell.disablePadding ? "none" : "default"}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : "asc"}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <span className={classes.visuallyHidden}>
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
+                  </span>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+          <TableCell padding="" />
+        </TableRow>
+      </TableHead>
+    );
+  }
+
+  EnhancedTableHead.propTypes = {
+    classes: PropTypes.object.isRequired,
+    numSelected: PropTypes.number.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    order: PropTypes.oneOf(["asc", "desc"]).isRequired,
+    orderBy: PropTypes.string.isRequired,
+    rowCount: PropTypes.number.isRequired
+  };
+
+  const useToolbarStyles = makeStyles(theme => ({
+    root: {
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(1)
+    },
+    highlight:
+      theme.palette.type === "light"
+        ? {
+            color: theme.palette.secondary.main,
+            backgroundColor: lighten(theme.palette.secondary.light, 0.85)
+          }
+        : {
+            color: theme.palette.text.primary,
+            backgroundColor: theme.palette.secondary.dark
+          },
+    title: {
+      flex: "1 1 100%"
+    }
+  }));
+
+  const EnhancedTableToolbar = props => {
+    const classes = useToolbarStyles();
+    const { numSelected } = props;
+
+    return (
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: numSelected > 0
+        })}
+      >
+        {numSelected > 0 ? (
+          <Typography
+            className={classes.title}
+            color="inherit"
+            variant="subtitle1"
+          >
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography
+            className={classes.title}
+            variant="h6"
+            id="tableTitle"
+            align="center"
+          >
+            Facedrive Vs Stripe Disrepency
+          </Typography>
+        )}
+      </Toolbar>
+    );
+  };
+
+  EnhancedTableToolbar.propTypes = {
+    numSelected: PropTypes.number.isRequired
+  };
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      width: "100%"
+    },
+    paper: {
+      width: "100%",
+      marginBottom: theme.spacing(2)
+    },
+    table: {
+      minWidth: 750
+    },
+    visuallyHidden: {
+      border: 0,
+      clip: "rect(0 0 0 0)",
+      height: 1,
+      margin: -1,
+      overflow: "hidden",
+      padding: 0,
+      position: "absolute",
+      top: 20,
+      width: 1
+    }
+  }));
+  const classes = useStyles();
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("calories");
+  const [selected, setSelected] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [dense, setDense] = React.useState(false);
+  const [rowsPerPage, setRowsPerPage] = React.useState(100);
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const handleSelectAllClick = event => {
+    if (event.target.checked) {
+      const newSelecteds = rows.map(n => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangeDense = event => {
+    setDense(event.target.checked);
+  };
+
+  const isSelected = name => selected.indexOf(name) !== -1;
+
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <EnhancedTableToolbar numSelected={selected.length} />
+        <TableContainer>
+          <Table
+            className={classes.table}
+            aria-labelledby="tableTitle"
+            size={dense ? "small" : "medium"}
+            aria-label="enhanced table"
+          >
+            <EnhancedTableHead
+              classes={classes}
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.name);
+                  const labelId = `enhanced-table-checkbox-${index}`;
+
+                  return (
+                    <TableRow
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.name}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="" />
+
+                      <TableCell component="th" scope="row">
+                        <SimplePopover
+                          dt={{ id: row.discrepency_id, notes: row.notes }}
+                        />
+                      </TableCell>
+                      <TableCell align="center">
+                        {row.stripe_charge_id}
+                      </TableCell>
+                      <TableCell align="center">
+                        {row.status}{" "}
+                        <MenuPopupState
+                          dt={{ id: row.discrepency_id, status: row.status }}
+                        />
+                      </TableCell>
+                      <TableCell align="center">
+                        <SimplePopoverForNotes
+                          dt={{ id: row.discrepency_id, notes: row.notes }}
+                        />
+                      </TableCell>
+                      <TableCell align="center">{row.description}</TableCell>
+                      <TableCell align="center">{row.stripe_amount}</TableCell>
+                      <TableCell align="center">{row.fd_amount}</TableCell>
+                      <TableCell align="center">
+                        {row.desrepency_amount}
+                      </TableCell>
+                      <TableCell padding="" />
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[100, 150, 200]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </Paper>
+      <FormControlLabel
+        control={<Switch checked={dense} onChange={handleChangeDense} />}
+        label="Dense padding"
+      />
+    </div>
+  );
+}
+

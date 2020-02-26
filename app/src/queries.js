@@ -93,3 +93,6 @@ exports.updateProperDes= `update disrepency set  Description = 'exists in app on
 exports.updateDesrBoth = `update disrepency set  Description = 'exists in none', Status='new' where Stripe_Amount IS NULL  and FD_Amount IS NULL;`
 exports.updateDesrNone = `update disrepency set  Description = 'no disrepency', Status='new' where ((Stripe_Amount - FD_Amount) = 0) and (Stripe_Amount IS Not NULL) and (FD_AMOUNT is NOT NULL);`
 
+
+exports.getUSerDetails=`select ride_id , ride_created from facedrive, ;`
+

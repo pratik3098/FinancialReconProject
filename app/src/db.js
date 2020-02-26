@@ -101,10 +101,10 @@ exports.updateStatus= async function(Id, status){
     else
     await sql.query(queries.updateStatustonew+Id+queries.close).catch(err=>{console.log(err.message)})
 }
-exports.getdetailByID= async function(id){
+exports.getRideInfo= async function(id){
    id ="\'"+id+"\'"
-   let result =await sql.query(queries.getdetailByID + id + `;`)
-   return result
+   let result =await sql.query(queries.getUSerDetails)
+   return result.rows
 }
 
 exports.getMaxDate=async function(){
@@ -146,3 +146,4 @@ function condateFormat(d){
 //console.log(res)
 
 //this.updateStatus(1, 'reconciled').catch(err=>{console.log(err)})
+//this.getRideInfo('1').then(res=>{console.log(res)}).catch(err=>{console.log(err)})

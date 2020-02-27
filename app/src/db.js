@@ -2,6 +2,7 @@ const Pool = require('pg').Pool
 const xlsx = require('xlsx')
 const { getJsDateFromExcel } = require("excel-date-to-js")
 const path =require('path')
+const localStorage = require('localStorage')
 const moment= require('moment')
 const config =require('./configData')
 const queries = require('./queries')
@@ -84,17 +85,26 @@ exports.readSTDataFromExcel= async function(){
 }
 
 exports.readSTData= async function(fileName){
-   let stripeFile = xlsx.readFile(fileName)
-    
+    return new Promise((resolve,reject)=>{
+     let stripeFile = xlsx.readFile(fileName)
+    // let stripeFile = xlsx.readFile("./stripe_data.xlsx")
+     let accepted = 0 
+     let notAccepted =0 
     // JSON Arrays of the sheet data
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     stripeData.forEach(res =>{
     let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
-    Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close).then(res=>{
-        console.log(res)
-    }).catch(err=>{console.error(err.message)})) 
-    }) 
-    
+    Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close)).then(res=>{
+      //  console.log(res)
+            accepted++
+           //console.log(accepted)
+    }).catch(err=>{
+           notAccepted++
+      //  console.error(err.message)
+     })
+    })
+    resolve({"accepted": accepted, "notAccepted": notAccepted})
+})
 }
 
 exports.dataWithInconsistency= async function(startDate, endDate){
@@ -147,10 +157,8 @@ exports.getAllData= async function (){
     return result.rows
 }
 
-function dateOps1(dt){
-    console.log(dt.substring(0,10)+"T" + dt.substring(11,16))
-}
-//this.connectToDb().catch(err=>{console.error(err.message)})
+
+this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
@@ -169,3 +177,6 @@ function dateOps1(dt){
 //this.getAllData().then(res=>{console.log(res)}).catch(err=>{console.log(err.message)})
 //console.log(condateFormat('2020-02-12T05:00:00.000Z'))
 //dateOps1('2020-02-12T05:00:00.000Z')
+this.readSTData().then(res=>{
+    console.log(res)
+}).catch(err=>{console.error(err.message)}) 

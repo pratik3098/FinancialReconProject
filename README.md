@@ -12,9 +12,10 @@ It accepts GET and POST requests and sends the data.
 
 ### Commands to start  the app: 
 1. docker-compose -f ./app/src/postgres-db.yml up -d
-2. node ./app/src/expressApp.js
-3. cd facedrive-app
-4. npm start
+2. cd app 
+3. npm start
+4. cd ../facedrive-app
+5. npm start
 
 
 ### Note: If starting project for first time:

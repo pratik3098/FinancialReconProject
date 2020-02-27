@@ -16,6 +16,7 @@ It accepts GET and POST requests and sends the data.
 3. cd facedrive-app
 4. npm start
 
+
 ### Note: If starting project for first time:
 1. cd facedrive-app
 2. npm install
@@ -23,13 +24,14 @@ It accepts GET and POST requests and sends the data.
 
 
 ### To Setup Docker-enviorment:
-1. chmod 777 * src/.docker-config.sh
+1. chmod 777  src/.docker-config.sh
 2. sudo ./docker-config.sh 
 3. log-out and log-in
 4. sudo apt install docker-compose -y 
 #### Note:  For Windows, use Docker-Toolkit.
 #### If you use it, Change the localhost address in ./app/src/configData.js to docker-machine ip address.
 #### docker machine address command: docker-machine ip
+#### Make sure to apply proper permissions to "./uploads" directory
 
 
 ### To setup Node enviorment on Ubuntu:

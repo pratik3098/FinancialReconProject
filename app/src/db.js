@@ -83,17 +83,18 @@ exports.readSTDataFromExcel= async function(){
     console.log("Data inserted into Stripe successfully")
 }
 
-exports.readSTData= async function(file){
-    console.log("Read stripe :"+ JSON.stringify(file))
-   let stripeFile = xlsx.readFile(file.name)
+exports.readSTData= async function(fileName){
+   let stripeFile = xlsx.readFile(fileName)
     
     // JSON Arrays of the sheet data
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     stripeData.forEach(res =>{
     let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
-    Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
+    Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close).then(res=>{
+        console.log(res)
+    }).catch(err=>{console.error(err.message)})) 
     }) 
-    console.log("Data inserted into Stripe successfully")
+    
 }
 
 exports.dataWithInconsistency= async function(startDate, endDate){

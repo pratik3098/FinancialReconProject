@@ -14,7 +14,6 @@ app.set('views',path.join(__dirname,"../views"))
 app.use(express.static("../views"))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
-app.use(upload())
 app.use(morgan('dev'))
 app.use(function(req,res,next){
     res.header("Access-Control-Allow-Origin","*")
@@ -22,7 +21,10 @@ app.use(function(req,res,next){
     res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept , enctype")
     next()
 })
-
+app.use(upload({
+    useTempFiles : true,
+    tempFileDir : path.resolve(__dirname,'../tmp')
+}))
 app.listen(port,()=>{ console.log("Server is running on port: "+port)})
 
 
@@ -150,11 +152,13 @@ app.post('/newData',(req,res,next)=>{
     if(db.isConnected){
     console.log("Form: "+req.files.file)
      let file = req.files.file
-     let filename= file.name
-      file.mv(path.resolve(__dirname,'../uploads/'+moment().format()+'-'+filename)).catch(err=>{
+     let filePath =moment().format()+'-'+file.name
+       console.log(file.tempFilePath)
+      /* file.mv(filePath).catch(err=>{
+     // file.mv(path.resolve(__dirname,'../uploads/'+moment().format()+'-'+filename)).catch(err=>{
           console.error(err.message)
-      })
-  /*  db.readSTData(req.body.file).then(res1=>{
+      }) */
+    db.readSTData(file.tempFilePath).then(res1=>{
         return res.status(200).send({
             success: 'true',
             data: res1
@@ -166,9 +170,9 @@ app.post('/newData',(req,res,next)=>{
         })})
     }else
       redirect('/')
-      */
+    
 }
-})
+)
 
 app.post('/rideInfo',(req,res,next)=>{
     if(db.isConnected){

@@ -146,12 +146,13 @@ function DbApp(){
             'Content-Type': 'multipart/form-data'
           }
         }).then(res=>{
-           res.json().then(data=>{
+          /* res.json().then(data=>{
              if(Boolean(data.data.accepted))
              setAccepted(data.data.accepted)
              if(Boolean(data.data.notAccepted))
              setNotAccepted(data.data.notAccepted)
-           })
+            
+           }) */
         }).catch(err=>{console.error(err.message)})  
    
      /* fetch(new Request('http://localhost:8080/newData',{

@@ -112,9 +112,8 @@ function DbApp(){
     };
     const [state, setState] = React.useState(initialState);
     const [result, setResult]=React.useState(true)
-    const [accepted, setAccepted]=React.useState(0)
-    const [notAccepted, setNotAccepted]= React.useState(0)
-  
+    const [accepted, setAccept]=React.useState(0)
+    const [notAccepted, setNotAccept]= React.useState(0)
     const handleOpen = () => {
       setState({
         ...state,
@@ -146,27 +145,23 @@ function DbApp(){
             'Content-Type': 'multipart/form-data'
           }
         }).then(res=>{
-          /* res.json().then(data=>{
-             if(Boolean(data.data.accepted))
-             setAccepted(data.data.accepted)
+            console.log(res.data.data)
+            // /setAcceptance(res.data.data)
+            if(Boolean(res.data))
+            setResult(false)
+            if(Boolean(res.data.data.accepted))
+             setAccept(res.data.data.accepted)
+             if(Boolean(res.data.data.notAccepted))
+             setNotAccept(res.data.data.notAccepted)
+           /*res.json().then(data=>{
+             
              if(Boolean(data.data.notAccepted))
              setNotAccepted(data.data.notAccepted)
-            
+              
            }) */
         }).catch(err=>{console.error(err.message)})  
    
-     /* fetch(new Request('http://localhost:8080/newData',{
-        method: 'POST',
-        headers: new Headers({'enctype': 'multipart/form-data'}),
-        body: form
-      })).then(res=>{
-        res.json().then(data=>{
-      //  console.log("File upload: "+data.data)
-         setResult(false)
-        }).catch(err=>{console.error("File upload failed" + err.message)})
-      }).catch(err=>{console.error("File upload failed" +err.message)}) 
-    
-  */
+
   }
 
     

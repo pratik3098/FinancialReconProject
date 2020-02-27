@@ -2,7 +2,7 @@ const Pool = require('pg').Pool
 const xlsx = require('xlsx')
 const { getJsDateFromExcel } = require("excel-date-to-js")
 const path =require('path')
-const localStorage = require('localStorage')
+const fs = require('fs')
 const moment= require('moment')
 const config =require('./configData')
 const queries = require('./queries')
@@ -90,21 +90,31 @@ exports.readSTData= async function(fileName){
     // let stripeFile = xlsx.readFile("./stripe_data.xlsx")
      let accepted = 0 
      let notAccepted =0 
-    // JSON Arrays of the sheet data
+     let ar= {accepted: 0, not_acc: 0}
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     stripeData.forEach(res =>{
     let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
     Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close)).then(res=>{
       //  console.log(res)
             accepted++
-           //console.log(accepted)
+            fs.writeFile('../tmp/temp1.txt', accepted.toString(), (err)=>{})
     }).catch(err=>{
            notAccepted++
-      //  console.error(err.message)
+           fs.writeFile('../tmp/temp2.txt', notAccepted.toString(), (err)=>{})
+         //console.error(err.message)
      })
     })
-    resolve({"accepted": accepted, "notAccepted": notAccepted})
-})
+    fs.readFile('../tmp/temp2.txt', "utf8", (err, data)=>{
+        fs.readFile('../tmp/temp1.txt', "utf8", (err1, data1)=>{
+            let a= 0
+            let b=0
+            if(Boolean(data1))
+            a=Number(data1)
+            if(Boolean(data))
+            b=Number(data)
+            resolve({"accepted": a , "notAccepted": b})
+        })
+    })})
 }
 
 exports.dataWithInconsistency= async function(startDate, endDate){
@@ -158,7 +168,7 @@ exports.getAllData= async function (){
 }
 
 
-this.connectToDb().catch(err=>{console.error(err.message)})
+//this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
 //this.readSTDataFromExcel().catch(err=>{console.error(err.message)})
@@ -177,6 +187,6 @@ this.connectToDb().catch(err=>{console.error(err.message)})
 //this.getAllData().then(res=>{console.log(res)}).catch(err=>{console.log(err.message)})
 //console.log(condateFormat('2020-02-12T05:00:00.000Z'))
 //dateOps1('2020-02-12T05:00:00.000Z')
-this.readSTData().then(res=>{
+/*this.readSTData().then(res=>{
     console.log(res)
-}).catch(err=>{console.error(err.message)}) 
+}).catch(err=>{console.error(err.message)}) */

@@ -55,7 +55,6 @@ exports.createDefaultTables=async function(){
 
 exports.readFCDataFromExcel= async function(){
     let fcFile= xlsx.readFile(path.resolve(__dirname, config.fcFilePath))
-    
     // JSON Arrays of the sheet data
     let fcData = xlsx.utils.sheet_to_json(fcFile.Sheets[fcFile.SheetNames[0]])
    fcData.forEach(res =>{
@@ -86,7 +85,7 @@ exports.readSTDataFromExcel= async function(){
 
 exports.readSTData= async function(file){
     console.log("Read stripe :"+ JSON.stringify(file))
-   /* let stripeFile = xlsx.readFile(file.name)
+   let stripeFile = xlsx.readFile(file.name)
     
     // JSON Arrays of the sheet data
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
@@ -94,7 +93,7 @@ exports.readSTData= async function(file){
     let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
     Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close).catch(err=>{console.error(err.message)})) 
     }) 
-    console.log("Data inserted into Stripe successfully") */
+    console.log("Data inserted into Stripe successfully")
 }
 
 exports.dataWithInconsistency= async function(startDate, endDate){

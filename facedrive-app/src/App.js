@@ -28,6 +28,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import axios from 'axios';
 
 
 
@@ -134,21 +135,37 @@ function DbApp(){
         files: files,
         open: false
       });
+       
+      let form = new FormData()
+      form.append('file',files[0])
+      form.append('name',files[0].name)
+      
 
-      console.log(files[0])
-     
-      fetch(new Request('http://localhost:8080/newData',{
+        axios.post('http://localhost:8080/newData',form,{
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(res=>{
+           res.json().then(data=>{
+             if(Boolean(data.data.accepted))
+             setAccepted(data.data.accepted)
+             if(Boolean(data.data.notAccepted))
+             setNotAccepted(data.data.notAccepted)
+           })
+        }).catch(err=>{console.error(err.message)})  
+   
+     /* fetch(new Request('http://localhost:8080/newData',{
         method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify({file: files[0]})
+        headers: new Headers({'enctype': 'multipart/form-data'}),
+        body: form
       })).then(res=>{
         res.json().then(data=>{
       //  console.log("File upload: "+data.data)
          setResult(false)
         }).catch(err=>{console.error("File upload failed" + err.message)})
-      }).catch(err=>{console.error("File upload failed" +err.message)})
-
-  
+      }).catch(err=>{console.error("File upload failed" +err.message)}) 
+    
+  */
   }
 
     
@@ -169,7 +186,7 @@ function DbApp(){
         <DropzoneDialog
           open={state.open}
           onSave={handleSave}
-          accept=".xlsx"
+          accept="file/.xlsx"
           showPreviews={true}
           maxFileSize={5000000}
           onClose={handleClose}
@@ -180,10 +197,10 @@ function DbApp(){
           dropzoneText={"Upload"}
         />
         </Box>
-        <box m={3}> 
+        <Box m={3}> 
       <Typography hidden={result}> Entries updated: {accepted}</Typography> 
       <Typography hidden={result}> Entries rejected: {notAccepted}</Typography>
-        </box>
+        </Box>
         </Grid>
       </div>
     );
@@ -412,7 +429,7 @@ function MultilineTextViews(dt) {
 
     fetch(new Request('http://localhost:8080/getAll')).then(res=>{
         res.json().then(data=>{
-        console.log("Rows: "+data.data)
+        console.log("Rows: "+data)
          setRows(data.data)
          
         }).catch(err=>{console.error(err.message)})
@@ -425,11 +442,10 @@ function MultilineTextViews(dt) {
       method: 'POST',
       headers: new Headers({'Content-Type': 'application/json'}),
       body: JSON.stringify({"startDate": backendDate(startDate), "endDate": backendDate(endDate)})
-     // body: JSON.stringify({"startDate": '2020-02-10T05:00:00.000Z', "endDate": '2020-02-13T05:00:00.000Z'})
     }).then(res=>{
       res.json().then(data=>{
 
-          console.log("Dt1 : "+ JSON.stringify(data.data))
+          console.log("Dt1 : "+ data)
           if(Boolean(data.data))
             setRows(data.data)
         

@@ -1,7 +1,7 @@
 import React from 'react';
 import 'date-fns';
 import './App.css';
-import 'moment';
+import moment from 'moment';
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -160,7 +160,7 @@ function DbApp(){
              setNotAccepted(data.data.notAccepted)
               
            }) */
-        }).catch(err=>{console.error(err.message)})  
+        }).catch(err=>{console.error(err.message)})
    
 
   }
@@ -429,6 +429,7 @@ function MultilineTextViews(dt) {
     fetch(new Request('http://localhost:8080/getAll')).then(res=>{
         res.json().then(data=>{
         console.log("Rows: "+data)
+         if(Boolean(data.data))
          setRows(data.data)
          
         }).catch(err=>{console.error(err.message)})
@@ -617,7 +618,6 @@ const onChangeSetEnd=(event)=>{
   const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
     const { numSelected } = props;
-
     return (
      
       <Toolbar
@@ -645,7 +645,7 @@ const onChangeSetEnd=(event)=>{
             Facedrive Vs Stripe Disrepency
           </Typography>
           <div>
-          <TextField  id="start-datetime" label="Start Date" type="datetime-local" value={startDate} onChange={onChangeSetStart}  > </TextField>
+          <TextField  id="start-datetime" label="Start Date" type="datetime-local"  value={startDate} onChange={onChangeSetStart}  > </TextField>
           <box m={1}>
           <TextField  id="end-datetime" label="End Date" type="datetime-local" value={endDate} onChange={onChangeSetEnd}> </TextField> 
           </box>

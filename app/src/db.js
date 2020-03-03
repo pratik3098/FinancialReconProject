@@ -86,36 +86,36 @@ exports.readSTDataFromExcel= async function(){
 
 exports.readSTData= async function(fileName){
     return new Promise((resolve,reject)=>{
-     let stripeFile = xlsx.readFile(fileName)
-     //let stripeFile = xlsx.readFile(path.resolve(__dirname,"./stripe_data.xlsx"))
-     let accepted = 0 
-     let notAccepted =0 
+        let accepted = 0 
+        let notAccepted =0 
      
+   async function readData(){ 
+   // let stripeFile = xlsx.readFile(fileName)
+    let stripeFile = xlsx.readFile(path.resolve(__dirname,"./stripe_data.xlsx"))
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     stripeData.forEach(res =>{
     let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
     Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close)).then(res=>{
+
             accepted++
-            fs.writeFile('../tmp/temp1.txt', accepted, (err)=>{})
+            // console.log(res)
+            
     }).catch(err=>{
            notAccepted++
-           fs.writeFile('../tmp/temp2.txt', notAccepted, (err)=>{})
          //console.error(err.message)
-     })
     })
-    fs.readFile('../tmp/temp2.txt', "utf8", (err, data)=>{
-        fs.readFile('../tmp/temp1.txt', "utf8", (err1, data1)=>{
-            let a= 0
-            let b=0
-            if(Boolean(data1))
-            a=Number(data1)
-            if(Boolean(data))
-            b=Number(data)
-           fs.unlink("../tmp/temp1.txt",err=>{})
-           fs.unlink("../tmp/temp2.txt",err=>{})
-            resolve({"accepted": a , "notAccepted": b})
-        })
-    })})
+  
+    }
+    
+    )
+}
+
+    readData().then((res)=>{ this.insertDataIntoDes().catch(err=>console.error(err.message))}).catch(err=>{console.error(err.message)}).then(()=>{
+        setTimeout(()=>{ resolve({'accepted': accepted, "notAccepted": notAccepted})},20000)
+    }).catch(err=>console.error(err.message))
+    
+})
+  
     
 }
 

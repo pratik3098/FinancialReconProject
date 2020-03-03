@@ -57,6 +57,7 @@ function DbApp(){
     fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
       res.json().then(data=>{
         console.log("Current date: "+data.data)
+         if(Boolean(data.data))
          setCurrentDate(visibleDate(data.data))
         
       })

@@ -412,6 +412,7 @@ function MultilineTextViews(dt) {
     fetch(new Request('http://localhost:8080/minDate')).then(res=>{
       res.json().then(data=>{
         console.log("Min date: " +data.data)
+         if(Boolean(data.data))
          setStartDate(visibleDate(data.data))
       })
     }).catch(err=>{console.error(err.message)})
@@ -419,6 +420,7 @@ function MultilineTextViews(dt) {
     fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
       res.json().then(data=>{
         console.log("Max date: "+data.data)
+         if(Boolean(data.data))
          setEndDate(visibleDate(data.data))
         
       })

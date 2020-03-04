@@ -48,13 +48,12 @@ export default function App() {
 function DbApp(){
     const[currentDate, setCurrentDate] = React.useState(' ')
     const[status,setStatus]=React.useState('new')
-     
   
     function visibleDate(dt){
        return (dt.substring(0,10)+"T" + dt.substring(11,16))
     }
     
-    fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
+    fetch(new Request('http://18.191.32.86:8080/maxDate')).then(res=>{
       res.json().then(data=>{
         console.log("Current date: "+data.data)
          if(Boolean(data.data))
@@ -87,12 +86,6 @@ function DbApp(){
         <Box m={1}>
         <Typography>Disrepency Table has been updated to: {currentDate}</Typography>
         </Box>
-        <Box  m={3}  > 
-        <Grid container direction="row" justify="center" alignItems="center">
-        <Typography>Upload Stripe Sheet: </Typography>
-        <Box m={1}></Box>
-         <DropzoneFileUpload></DropzoneFileUpload> 
-         </Grid></Box>
         <box m={3}>
         <Typography>Identify Desrepencies: </Typography> 
         </box>
@@ -106,103 +99,7 @@ function DbApp(){
   }
   
 
-  function DropzoneFileUpload() {
-    const initialState = {
-      open: false,
-      files: []
-    };
-    const [state, setState] = React.useState(initialState);
-    const [result, setResult]=React.useState(true)
-    const [accepted, setAccept]=React.useState(0)
-    const [notAccepted, setNotAccept]= React.useState(0)
-    const handleOpen = () => {
-      setState({
-        ...state,
-        open: true
-      });
-    };
-  
-    const handleClose = () => {
-      setState({
-        ...state,
-        open: false
-      });
-    };
-  
-    const handleSave = files => {
-      setState({
-        ...state,
-        files: files,
-        open: false
-      });
-       
-      let form = new FormData()
-      form.append('file',files[0])
-      form.append('name',files[0].name)
-      
 
-        axios.post('http://localhost:8080/newData',form,{
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }).then(res=>{
-            console.log(res.data.data)
-            // /setAcceptance(res.data.data)
-            if(Boolean(res.data))
-            setResult(false)
-            if(Boolean(res.data.data.accepted))
-             setAccept(res.data.data.accepted)
-             if(Boolean(res.data.data.notAccepted))
-             setNotAccept(res.data.data.notAccepted)
-           /*res.json().then(data=>{
-             
-             if(Boolean(data.data.notAccepted))
-             setNotAccepted(data.data.notAccepted)
-              
-           }) */
-        }).catch(err=>{console.error(err.message)})
-   
-
-  }
-
-    
-    
-  
-    return (
-      <div>
-        <Grid container direction="row" justify="center" alignItems="center">
-        <Box m={3}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={handleOpen}
-        >
-          Add Data
-        </Button>
-        <DropzoneDialog
-          open={state.open}
-          onSave={handleSave}
-          accept="file/.xlsx"
-          showPreviews={true}
-          maxFileSize={5000000}
-          onClose={handleClose}
-          cancelButtonText={"Cancel"}
-          submitButtonText={"Upload"}
-          showFileNamesInPreview={true}
-          dialogTitle={"stripe data sheet"}
-          dropzoneText={"Upload"}
-        />
-        </Box>
-        <Box m={3}> 
-      <Typography hidden={result}> Entries updated: {accepted}</Typography> 
-      <Typography hidden={result}> Entries rejected: {notAccepted}</Typography>
-        </Box>
-        </Grid>
-      </div>
-    );
-  }
-  
 // e.g: dt={{id: "1", data: "ll" }}
 function SimplePopover(dt) {
   const useStyles = makeStyles(theme => ({
@@ -319,7 +216,7 @@ function MultilineTextFields(dt) {
   const updateNotes = event => {
     setNotes(event.target.value);
     dt.dt.notes=notes
-    fetch('http://localhost:8080/updateNotes',{
+    fetch('http://18.191.32.86:8080/updateNotes',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt.dt.id , "notes": notes})
@@ -365,7 +262,7 @@ function MultilineTextViews(dt) {
     }
   }));
    
-    fetch('http://localhost:8080/rideInfo',{
+    fetch('http://18.191.32.86:8080/rideInfo',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt.dt.id })
@@ -408,8 +305,108 @@ function MultilineTextViews(dt) {
     function backendDate(dt){
       return(dt+':00.000Z')
     }
+    function DropzoneFileUpload() {
+      const initialState = {
+        open: false,
+        files: []
+      };
+      const [state, setState] = React.useState(initialState);
+      const [result, setResult]=React.useState(true)
+      const [accepted, setAccept]=React.useState(0)
+      const [notAccepted, setNotAccept]= React.useState(0)
+      const handleOpen = () => {
+        setState({
+          ...state,
+          open: true
+        });
+      };
+    
+      const handleClose = () => {
+        setState({
+          ...state,
+          open: false
+        });
+      };
+    
+      const handleSave = files => {
+        setState({
+          ...state,
+          files: files,
+          open: false
+        });
+         setFileUpdateStatus(false)
+        let form = new FormData()
+        form.append('file',files[0])
+        form.append('name',files[0].name)
+        
+  
+          axios.post('http://18.191.32.86:8080/newData',form,{
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then(res=>{
+              console.log(res.data.data)
+              if(Boolean(res.data)){
+              setResult(false)
+              setFileUpdateStatus(true)
+              fetch(new Request('http://18.191.32.86:8080/getAll')).then(res=>{
+                res.json().then(data=>{
+                console.log("Rows: "+data)
+                 if(Boolean(data.data))
+                 setRows(data.data)
+                 
+                }).catch(err=>{console.error(err.message)})
+              }).catch(err=>{console.error(err.message)}) 
+              }
+            
+              if(Boolean(res.data.data.accepted))
+               setAccept(res.data.data.accepted)
+               if(Boolean(res.data.data.notAccepted))
+               setNotAccept(res.data.data.notAccepted)
+          }).catch(err=>{console.error(err.message)})
+    }
+  
+    let [fileUpdateStatus,setFileUpdateStatus]= React.useState(true)
+      
+    
+      return (
+        <div>
+          <Grid container direction="row" justify="center" alignItems="center">
+          <Box m={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={handleOpen}
+          >
+            Add Data
+          </Button>
+          <Typography hidden={fileUpdateStatus}> Files updating!!</Typography>
+          <DropzoneDialog
+            open={state.open}
+            onSave={handleSave}
+            accept="file/.xlsx"
+            showPreviews={true}
+            maxFileSize={5000000}
+            onClose={handleClose}
+            cancelButtonText={"Cancel"}
+            submitButtonText={"Upload"}
+            showFileNamesInPreview={true}
+            dialogTitle={"stripe data sheet"}
+            dropzoneText={"Upload"}
+          />
+          </Box>
+          <Box m={3}> 
+        <Typography hidden={result}> Entries updated: {accepted}</Typography> 
+        <Typography hidden={result}> Entries rejected: {notAccepted}</Typography>
+          </Box>
+          </Grid>
+        </div>
+      );
+    }
+    
   React.useEffect(()=>{
-    fetch(new Request('http://localhost:8080/minDate')).then(res=>{
+    fetch(new Request('http://18.191.32.86:8080/minDate')).then(res=>{
       res.json().then(data=>{
         console.log("Min date: " +data.data)
          if(Boolean(data.data))
@@ -417,7 +414,7 @@ function MultilineTextViews(dt) {
       })
     }).catch(err=>{console.error(err.message)})
     
-    fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
+    fetch(new Request('http://18.191.32.86:8080/maxDate')).then(res=>{
       res.json().then(data=>{
         console.log("Max date: "+data.data)
          if(Boolean(data.data))
@@ -426,7 +423,7 @@ function MultilineTextViews(dt) {
       })
     }).catch(err=>{console.error(err.message)})
 
-    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
+    fetch(new Request('http://18.191.32.86:8080/getAll')).then(res=>{
         res.json().then(data=>{
         console.log("Rows: "+data)
          if(Boolean(data.data))
@@ -438,7 +435,7 @@ function MultilineTextViews(dt) {
    },[])
 
    React.useEffect(()=>{
-    fetch('http://localhost:8080/dt1',{
+    fetch('http://18.191.32.86:8080/dt1',{
       method: 'POST',
       headers: new Headers({'Content-Type': 'application/json'}),
       body: JSON.stringify({"startDate": backendDate(startDate), "endDate": backendDate(endDate)})
@@ -643,7 +640,13 @@ const onChangeSetEnd=(event)=>{
             align="center"
           >
             Facedrive Vs Stripe Disrepency
-          </Typography>
+        </Typography>
+        <Box  m={3}  > 
+        <Grid container direction="row" justify="center" alignItems="center">
+        <Typography>Upload Stripe Sheet: </Typography>
+        <Box m={1}></Box>
+         <DropzoneFileUpload></DropzoneFileUpload> 
+         </Grid></Box>
           <div>
           <TextField  id="start-datetime" label="Start Date" type="datetime-local"  value={startDate} onChange={onChangeSetStart}  > </TextField>
           <box m={1}>
@@ -706,7 +709,7 @@ const onChangeSetEnd=(event)=>{
     setSelected([]);
   };
   const onChangeGetData=()=>{
-    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
+    fetch(new Request('http://18.191.32.86:8080/getAll')).then(res=>{
         res.json().then(data=>{
         console.log("Rows: "+data.data)
          setRows(data.data)
@@ -828,7 +831,7 @@ function MenuPopupState(dt) {
   const changeStatus= (event)=>{
    
     if(event.nativeEvent.target.outerText=='Reconcile'){
-      fetch('http://localhost:8080/updateStatus',{
+      fetch('http://18.191.32.86:8080/updateStatus',{
     method: 'POST',
     headers: new Headers({'Content-Type': 'application/json'}),
     body: JSON.stringify({"id": dt.dt.id , "status": 'reconciled'})
@@ -843,7 +846,7 @@ function MenuPopupState(dt) {
     }
     else if(event.nativeEvent.target.outerText=='Reject'){
   
-      fetch('http://localhost:8080/updateStatus',{
+      fetch('http://18.191.32.86:8080/updateStatus',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt.dt.id , "status": 'rejected'})

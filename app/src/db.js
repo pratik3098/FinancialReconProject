@@ -90,8 +90,7 @@ exports.readSTData= async function(fileName){
         let notAccepted =0 
      
    async function readData(){ 
-   // let stripeFile = xlsx.readFile(fileName)
-    let stripeFile = xlsx.readFile(path.resolve(__dirname,"./stripe_data.xlsx"))
+   let stripeFile = xlsx.readFile(fileName)
     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
     stripeData.forEach(res =>{
     let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
@@ -155,6 +154,8 @@ exports.getMinDate =async function(){
 }
 
 exports.insertDataIntoDes= async function (){
+    let date =  sql.query('select count(Date) from disrepency;').catch(err=>{console.log(err.message)})
+    await sql.query(queries.resetCount+ date.rows[0].count + ' ;')
     await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
     setTimeout(()=>{},3000)
     await sql.query(queries.updateProperStatus).catch(err=>{console.log(err.message)})

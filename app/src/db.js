@@ -154,8 +154,8 @@ exports.getMinDate =async function(){
 }
 
 exports.insertDataIntoDes= async function (){
-    let date =  sql.query('select count(Date) from disrepency;').catch(err=>{console.log(err.message)})
-    await sql.query(queries.resetCount+ date.rows[0].count + ' ;')
+  ///  let date =  sql.query('select count(Date) from disrepency;').catch(err=>{console.log(err.message)})
+   // await sql.query(queries.resetCount+ date.rows[0].count + ' ;')
     await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
     setTimeout(()=>{},3000)
     await sql.query(queries.updateProperStatus).catch(err=>{console.log(err.message)})

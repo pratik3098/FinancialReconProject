@@ -348,7 +348,7 @@ function MultilineTextViews(dt) {
           }).then(res=>{
               console.log(res.data.data)
               if(Boolean(res.data.data)){
-              setResult(false)
+              
               setFileUpdateStatus(true)
               fetch(new Request('http://localhost:8080/getAll')).then(res1=>{
                 res1.json().then(data=>{
@@ -359,12 +359,14 @@ function MultilineTextViews(dt) {
                 }).catch(err=>{console.error(err.message)})
               }).catch(err=>{console.error(err.message)}) 
               }
-            
+             
               if(Boolean(res.data.data.accepted))
                setAccept(res.data.data.accepted)
                if(Boolean(res.data.data.notAccepted))
                setNotAccept(res.data.data.notAccepted)
+               setResult(false)
           }).catch(err=>{console.error(err.message)})
+          
     }
   
    

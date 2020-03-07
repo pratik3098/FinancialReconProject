@@ -85,38 +85,37 @@ exports.readSTDataFromExcel= async function(){
 }
 
 exports.readSTData= async function(fileName){
+    let accepted = await this.getCount().catch(err=>console.log(err.message))
+    let notAccepted=0
     return new Promise((resolve,reject)=>{
-        let accepted = 0 
-        let notAccepted =0 
      
    async function readData(){ 
-   let stripeFile = xlsx.readFile(fileName)
-    let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
+     let stripeFile = xlsx.readFile(fileName)
+     let stripeData = xlsx.utils.sheet_to_json(stripeFile.Sheets[stripeFile.SheetNames[0]])
+    notAccepted =stripeData.length
     stripeData.forEach(res =>{
     let val ="\'"+res["id"]+"\'"+" , "+"\'"+res["Type"]+"\'"+" , "+"\'"+res["Source"]+"\'"+" , "+res["Amount"]+" , "+res["Fee"]+" , "+res["Net"]+" , "+"\'"+res["Currency"]+"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Created (UTC)"])).format() +"\'"+" , "+"\'"+ moment(getJsDateFromExcel(res["Available On (UTC)"])).format()+"\'"
-    Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close)).then(res=>{
-
-            accepted++
-            // console.log(res)
-            
-    }).catch(err=>{
-           notAccepted++
+    Promise.resolve(sql.query(queries.stripeInsertIntoAll + val + queries.close)).catch(err=>{
          //console.error(err.message)
     })
   
-    }
-    
-    )
+    })
 }
 
-    readData().then((res)=>{ this.insertDataIntoDes().catch(err=>console.error(err.message))}).catch(err=>{console.error(err.message)}).then(()=>{
-        setTimeout(()=>{ resolve({'accepted': accepted, "notAccepted": notAccepted})},20000)
-    }).catch(err=>console.error(err.message))
+    readData().then((res)=>{ 
+         this.insertDataIntoDes().then(()=>{
+           this.getCount().then(res=>{
+               let x = res - accepted
+               let y = res - notAccepted
+            resolve({'accepted': x, "notAccepted": y})
+           }).catch(err=>console.error(err.message))
+          }).catch(err=>console.error(err.message))
+         }).catch(err=>console.error(err.message))
     
-})
-  
+        })
+
     
-}
+    }
 
 exports.dataWithInconsistency= async function(startDate, endDate){
     let result = await sql.query(`select * from disrepency where date >= '` + startDate+ `' and date <= '`+endDate+`'  order by discrepency_id;`).catch(err=>{console.log(err.message)})
@@ -156,11 +155,11 @@ exports.getMinDate =async function(){
 exports.insertDataIntoDes= async function (){
     await this.resetCount().catch(err=>console.error(err.message))
     await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
-    setTimeout(()=>{},3000)
     await sql.query(queries.updateProperStatus).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateProperDes).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateDesrBoth).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateDesrNone).catch(err=>{console.log(err.message)})
+    await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
     console.log("Data inserted successfully in desrepency")
 }
 
@@ -177,6 +176,10 @@ exports.resetCount= async function(){
     }).catch(err=>{console.log(err.message)})
 }
 
+exports.getCount=async function(){
+   let result =await sql.query('select count(*) from disrepency;').catch(err=>console.error(err.message))
+   return (Number(result.rows[0].count))
+}
 //this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
 //this.readFCDataFromExcel().catch(err=>{console.error(err.message)})
@@ -196,8 +199,6 @@ exports.resetCount= async function(){
 //this.getAllData().then(res=>{console.log(res)}).catch(err=>{console.log(err.message)})
 //console.log(condateFormat('2020-02-12T05:00:00.000Z'))
 //dateOps1('2020-02-12T05:00:00.000Z')
-/*this.readSTData().then(res=>{
-    console.log(res)
-}).catch(err=>{console.error(err.message)}) */
-
+//this.readSTData().then(res=>{  console.log(res)}).catch(err=>{console.error(err.message)}) 
 //this.resetCount().catch(err=>console.error(err.message))
+//this.getCount().catch(err=>console.error(err.message))

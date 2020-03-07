@@ -154,11 +154,8 @@ app.post('/newData',(req,res,next)=>{
      let file = req.files.file
      let filePath =moment().format()+'-'+file.name
        console.log(file.tempFilePath)
-      /* file.mv(filePath).catch(err=>{
-     // file.mv(path.resolve(__dirname,'../uploads/'+moment().format()+'-'+filename)).catch(err=>{
-          console.error(err.message)
-      }) */
     db.readSTData(file.tempFilePath).then(res1=>{
+        console.log(res1)
         return res.status(200).send({
             success: 'true',
             data: res1

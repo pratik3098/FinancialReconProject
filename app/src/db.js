@@ -106,7 +106,7 @@ exports.readSTData= async function(fileName){
          this.insertDataIntoDes().then(()=>{
            this.getCount().then(res=>{
                let x = res - accepted
-               let y = res - notAccepted
+               let y =  notAccepted - x
             resolve({'accepted': x, "notAccepted": y})
            }).catch(err=>console.error(err.message))
           }).catch(err=>console.error(err.message))
@@ -160,6 +160,7 @@ exports.insertDataIntoDes= async function (){
     await sql.query(queries.updateDesrBoth).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateDesrNone).catch(err=>{console.log(err.message)})
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
+    await this.resetCount().catch(err=>console.error(err.message))
     console.log("Data inserted successfully in desrepency")
 }
 

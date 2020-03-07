@@ -154,8 +154,7 @@ exports.getMinDate =async function(){
 }
 
 exports.insertDataIntoDes= async function (){
-  ///  let date =  sql.query('select count(Date) from disrepency;').catch(err=>{console.log(err.message)})
-   // await sql.query(queries.resetCount+ date.rows[0].count + ' ;')
+    await this.resetCount().catch(err=>console.error(err.message))
     await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
     setTimeout(()=>{},3000)
     await sql.query(queries.updateProperStatus).catch(err=>{console.log(err.message)})
@@ -170,6 +169,13 @@ exports.getAllData= async function (){
     return result.rows
 }
 
+exports.resetCount= async function(){
+    sql.query(`select count(description) from disrepency where description <> 'exists in none';`).then(res=>{
+        let x = Number(res.rows[0].count) + 1
+        console.log( 'Count reset :' + x)
+        sql.query(queries.resetCount+ x + ' ;').catch(err=>console.error(err.message))
+    }).catch(err=>{console.log(err.message)})
+}
 
 //this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
@@ -193,3 +199,5 @@ exports.getAllData= async function (){
 /*this.readSTData().then(res=>{
     console.log(res)
 }).catch(err=>{console.error(err.message)}) */
+
+//this.resetCount().catch(err=>console.error(err.message))

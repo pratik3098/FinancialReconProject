@@ -53,7 +53,7 @@ function DbApp(){
        return (dt.substring(0,10)+"T" + dt.substring(11,16))
     }
     
-    fetch(new Request('http://18.191.32.86:8080/maxDate')).then(res=>{
+    fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
       res.json().then(data=>{
         console.log("Current date: "+data.data)
          if(Boolean(data.data))
@@ -216,7 +216,7 @@ function MultilineTextFields(dt) {
   const updateNotes = event => {
     setNotes(event.target.value);
     dt.dt.notes=notes
-    fetch('http://18.191.32.86:8080/updateNotes',{
+    fetch('http://localhost:8080/updateNotes',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt.dt.id , "notes": notes})
@@ -262,7 +262,7 @@ function MultilineTextViews(dt) {
     }
   }));
    
-    fetch('http://18.191.32.86:8080/rideInfo',{
+    fetch('http://localhost:8080/rideInfo',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt.dt.id })
@@ -310,6 +310,7 @@ function MultilineTextViews(dt) {
         open: false,
         files: []
       };
+      let [fileUpdateStatus,setFileUpdateStatus]= React.useState(true)
       const [state, setState] = React.useState(initialState);
       const [result, setResult]=React.useState(true)
       const [accepted, setAccept]=React.useState(0)
@@ -340,7 +341,7 @@ function MultilineTextViews(dt) {
         form.append('name',files[0].name)
         
   
-          axios.post('http://18.191.32.86:8080/newData',form,{
+          axios.post('http://localhost:8080/newData',form,{
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -349,7 +350,7 @@ function MultilineTextViews(dt) {
               if(Boolean(res.data.data)){
               setResult(false)
               setFileUpdateStatus(true)
-              fetch(new Request('http://18.191.32.86:8080/getAll')).then(res1=>{
+              fetch(new Request('http://localhost:8080/getAll')).then(res1=>{
                 res1.json().then(data=>{
                 console.log("Rows: "+data)
                  if(Boolean(data.data))
@@ -366,7 +367,7 @@ function MultilineTextViews(dt) {
           }).catch(err=>{console.error(err.message)})
     }
   
-    let [fileUpdateStatus,setFileUpdateStatus]= React.useState(true)
+   
       
     
       return (
@@ -406,7 +407,7 @@ function MultilineTextViews(dt) {
     }
     
   React.useEffect(()=>{
-    fetch(new Request('http://18.191.32.86:8080/minDate')).then(res=>{
+    fetch(new Request('http://localhost:8080/minDate')).then(res=>{
       res.json().then(data=>{
         console.log("Min date: " +data.data)
          if(Boolean(data.data))
@@ -414,7 +415,7 @@ function MultilineTextViews(dt) {
       })
     }).catch(err=>{console.error(err.message)})
     
-    fetch(new Request('http://18.191.32.86:8080/maxDate')).then(res=>{
+    fetch(new Request('http://localhost:8080/maxDate')).then(res=>{
       res.json().then(data=>{
         console.log("Max date: "+data.data)
          if(Boolean(data.data))
@@ -423,7 +424,7 @@ function MultilineTextViews(dt) {
       })
     }).catch(err=>{console.error(err.message)})
 
-    fetch(new Request('http://18.191.32.86:8080/getAll')).then(res=>{
+    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
         res.json().then(data=>{
         console.log("Rows: "+data)
          if(Boolean(data.data))
@@ -435,7 +436,7 @@ function MultilineTextViews(dt) {
    },[])
 
    React.useEffect(()=>{
-    fetch('http://18.191.32.86:8080/dt1',{
+    fetch('http://localhost:8080/dt1',{
       method: 'POST',
       headers: new Headers({'Content-Type': 'application/json'}),
       body: JSON.stringify({"startDate": backendDate(startDate), "endDate": backendDate(endDate)})
@@ -448,7 +449,7 @@ function MultilineTextViews(dt) {
         
          
       }).catch(err=>{console.error(err.message)})
-    }).catch(err=>{console.error(err.message)}) 
+    }).catch(err=>{console.error(err.message)})  
    },[startDate,endDate])
 
    const onChangeSetStart=(event)=>{
@@ -709,7 +710,7 @@ const onChangeSetEnd=(event)=>{
     setSelected([]);
   };
   const onChangeGetData=()=>{
-    fetch(new Request('http://18.191.32.86:8080/getAll')).then(res=>{
+    fetch(new Request('http://localhost:8080/getAll')).then(res=>{
         res.json().then(data=>{
         console.log("Rows: "+data.data)
          setRows(data.data)
@@ -831,7 +832,7 @@ function MenuPopupState(dt) {
   const changeStatus= (event)=>{
    
     if(event.nativeEvent.target.outerText=='Reconcile'){
-      fetch('http://18.191.32.86:8080/updateStatus',{
+      fetch('http://localhost:8080/updateStatus',{
     method: 'POST',
     headers: new Headers({'Content-Type': 'application/json'}),
     body: JSON.stringify({"id": dt.dt.id , "status": 'reconciled'})
@@ -846,7 +847,7 @@ function MenuPopupState(dt) {
     }
     else if(event.nativeEvent.target.outerText=='Reject'){
   
-      fetch('http://18.191.32.86:8080/updateStatus',{
+      fetch('http://localhost:8080/updateStatus',{
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify({"id": dt.dt.id , "status": 'rejected'})

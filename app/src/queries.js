@@ -90,7 +90,7 @@ exports.updateProperStatus= `update disrepency set Description = 'exists in stri
 exports.updateProperDes= `update disrepency set  Description = 'exists in app only', Status='new' where Stripe_Amount IS  NULL and FD_Amount IS NOT NULL;`
 exports.updateDesrBoth = `update disrepency set  Description = 'exists in none', Status='new' where Stripe_Amount IS NULL  and FD_Amount IS NULL;`
 exports.updateDesrNone = `update disrepency set  Description = 'no disrepency', Status='new' where ((Stripe_Amount - FD_Amount) = 0) and (Stripe_Amount IS Not NULL) and (FD_AMOUNT is NOT NULL);`
-
+exports.deleteNULL= `delete from disrepency where description = 'exists in none';`
 
 exports.getUSerDetails1=`select ride_id, ride_created from facedrive, (select source from stripe Inner join  disrepency on stripe.id = disrepency.stripe_charge_id where discrepency_id = `
 exports.getUSerDetails2=`) as str_id where facedrive.stripe_reserve_charge_id = CAST( str_id as VARCHAR(28));`

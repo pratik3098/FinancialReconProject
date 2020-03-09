@@ -107,6 +107,9 @@ exports.readSTData= async function(fileName){
            this.getCount().then(res=>{
                let x = res - accepted
                let y =  notAccepted - x
+		  if(y<0){
+			  y=0
+		  }
             resolve({'accepted': x, "notAccepted": y})
            }).catch(err=>console.error(err.message))
           }).catch(err=>console.error(err.message))
@@ -153,6 +156,7 @@ exports.getMinDate =async function(){
 }
 
 exports.insertDataIntoDes= async function (){
+    await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
     await this.resetCount().catch(err=>console.error(err.message))
     await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateProperStatus).catch(err=>{console.log(err.message)})
@@ -161,6 +165,7 @@ exports.insertDataIntoDes= async function (){
     await sql.query(queries.updateDesrNone).catch(err=>{console.log(err.message)})
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
     await this.resetCount().catch(err=>console.error(err.message))
+    await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
     console.log("Data inserted successfully in desrepency")
 }
 
@@ -178,7 +183,7 @@ exports.resetCount= async function(){
 }
 
 exports.getCount=async function(){
-   let result =await sql.query('select count(*) from disrepency;').catch(err=>console.error(err.message))
+   let result =await sql.query('select count(*) from stripe;').catch(err=>console.error(err.message))
    return (Number(result.rows[0].count))
 }
 //this.connectToDb().catch(err=>{console.error(err.message)})

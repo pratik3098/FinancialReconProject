@@ -37,5 +37,6 @@ It accepts GET and POST requests and sends the data.
 
 ### To setup Node enviorment on Ubuntu:
 1. sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-2. nvm install node
+2. log-out and log-in
+3. nvm install node
 

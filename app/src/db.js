@@ -158,13 +158,27 @@ exports.getMinDate =async function(){
 exports.insertDataIntoDes= async function (){
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
     await this.resetCount().catch(err=>console.error(err.message))
-    await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
+    //await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
+    await sql.query(`select  (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (CAST (facedrive.up_amount_charged - stripe.amount  as int)) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive FULL JOIN stripe ON facedrive.amount_charged_id = stripe.source;`).then(res=>{
+        res.rows.forEach(row =>{
+            let date = this.sqlDateFormat(moment(row["date"]).format())
+            let val ="\'"+row["stripe_charge_id"]+"\'"+" , "+"\'"+row["status"]+"\'"+" , "+"\'"+row["description"]+"\'"+" , "+row["notes"]+" , "+row["amount"]+" , "+row["up_amount_charged"]+" , "+"\'"+row["desrepency_amount"]+"\'"+" , "+"\'"+date +"\'"
+      /*  Promise.resolve(sql.query(`insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values(`+val+`);`).catch(err=>{
+            console.log(err.message)
+            Promise.resolve(this.resetCount().catch(err=>err.message)).catch(err=>{console.log(err.message)})
+        })).catch(err=>{console.log(err.message)}) 
+
+    */
+   console.log(val)
+        })
+
+        
+    })
     await sql.query(queries.updateProperStatus).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateProperDes).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateDesrBoth).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateDesrNone).catch(err=>{console.log(err.message)})
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
-   // await sql.query(queries.deleteNULLStripe).catch(err=>{console.log(err.message)})
     await this.resetCount().catch(err=>console.error(err.message))
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
     console.log("Data inserted successfully in disrepency")
@@ -186,6 +200,10 @@ exports.resetCount= async function(){
 exports.getCount=async function(){
    let result =await sql.query('select count(*) from stripe;').catch(err=>console.error(err.message))
    return (Number(result.rows[0].count))
+}
+
+exports.sqlDateFormat= function(dt){
+    return dt.substring(0,11)+ " " +dt.substring(11,19)
 }
 //this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})

@@ -61,7 +61,7 @@ exports.disrepencyStatus= `CREATE TYPE  disrepencyStatus AS ENUM ('new', 'reconc
 exports.disrepencyDescription = `CREATE TYPE disrepencyDescription As ENUM ('no disrepency', 'amount mis-match', 'exists in app only', 'exists in stripe only' , 'exists in none');`
 exports.createDisrepencyTable = ` CREATE TABLE disrepency (
     Discrepency_ID     SERIAL PRIMARY KEY,
-    Stripe_Charge_ID   VARCHAR(28),
+    Stripe_Charge_ID   VARCHAR(28) UNIQUE,
     Status             disrepencyStatus DEFAULT 'new',
     Description        disrepencyDescription DEFAULT 'no disrepency',
     Notes              VARCHAR(100),

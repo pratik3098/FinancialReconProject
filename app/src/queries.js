@@ -87,7 +87,7 @@ exports.getdetailByID = `select * from disrepency where Discrepency_ID= `
 exports.dataWithInconsistency = `select * from discrepency where date >= ` 
 exports.insertAllData = `insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) select  (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (CAST (facedrive.up_amount_charged - stripe.amount  as int)) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive FULL JOIN stripe ON facedrive.amount_charged_id = stripe.source;`
 exports.updateProperStatus= `update disrepency set Description = 'exists in stripe only' , Status='new' where FD_Amount IS NULL and Stripe_Amount IS NOT NULL;`
-exports.updateProperDes= `update disrepency set  Description = 'exists in app only', Status='new' where Stripe_Amount IS  NULL and FD_Amount IS NOT NULL;`
+exports.updateProperDes= `delete from disrepency  where Stripe_Amount IS  NULL and FD_Amount IS NOT NULL;`
 exports.updateDesrBoth = `update disrepency set  Description = 'exists in none', Status='new' where Stripe_Amount IS NULL  and FD_Amount IS NULL;`
 exports.updateDesrNone = `update disrepency set  Description = 'no disrepency', Status='new' where ((Stripe_Amount - FD_Amount) = 0) and (Stripe_Amount IS Not NULL) and (FD_AMOUNT is NOT NULL);`
 exports.deleteNULL= `delete from disrepency where description = 'exists in none';`

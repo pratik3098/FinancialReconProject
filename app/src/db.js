@@ -121,7 +121,7 @@ exports.readSTData= async function(fileName){
     }
 
 exports.dataWithInconsistency= async function(startDate, endDate){
-    let result = await sql.query(`select * from disrepency where date >= '` + startDate+ `' and date <= '`+endDate+`'  order by discrepency_id;`).catch(err=>{console.log(err.message)})
+    let result = await sql.query(`select * from disrepency where (date >= '` + startDate+ `' and date <= '`+endDate+`') or date is NULL  order by discrepency_id;`).catch(err=>{console.log(err.message)})
     return result.rows
 }
 
@@ -164,9 +164,10 @@ exports.insertDataIntoDes= async function (){
     await sql.query(queries.updateDesrBoth).catch(err=>{console.log(err.message)})
     await sql.query(queries.updateDesrNone).catch(err=>{console.log(err.message)})
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
+   // await sql.query(queries.deleteNULLStripe).catch(err=>{console.log(err.message)})
     await this.resetCount().catch(err=>console.error(err.message))
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
-    console.log("Data inserted successfully in desrepency")
+    console.log("Data inserted successfully in disrepency")
 }
 
 exports.getAllData= async function (){

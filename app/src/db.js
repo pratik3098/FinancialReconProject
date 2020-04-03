@@ -161,14 +161,25 @@ exports.insertDataIntoDes= async function (){
     //await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
     await sql.query(`select  (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (CAST (facedrive.up_amount_charged - stripe.amount  as int)) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive FULL JOIN stripe ON facedrive.amount_charged_id = stripe.source;`).then(res=>{
         res.rows.forEach(row =>{
-           let dt = this.sqlDateFormat(moment(row["date"]).format())
+           
+           let samt = "\'"+row["amount"]+"\'"
+           if (row["amount"] === null)
+           samt= 'NULL'
+           let famt = "\'"+row["up_amount_charged"]+"\'"
+           if (row["up_amount_charged"] === null )
+           famt= 'NULL'
+           let desr = "\'"+row["desrepency_amount"]+"\'"
+           if (row["desrepency_amount"]=== null)
+           desr ='NULL'
+           let dt = "\'"+ this.sqlDateFormat(moment(row["date"]).format())  + "\'"
+           if (row["date"] === null)
+           dt = 'NULL'
           // console.log("Desrepecy Amount: "+row["desrepency_amount"])
-           let val ="\'"+row["stripe_charge_id"]+"\'"+" , "+"\'"+row["status"]+"\'"+" , "+"\'"+row["description"]+"\'"+" , "+"\'"+row["notes"]+"\'"+" , "+"\'"+row["amount"]+"\'"+" , "+"\'"+row["up_amount_charged"]+"\'"+" , "+"\'"+row["desrepency_amount"]+"\'"+" , "+"\'"+dt +"\'"
-        Promise.resolve(sql.query(`insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values(`+val+`);`).catch(err=>{
+          let val ="\'"+row["stripe_charge_id"]+"\'"+" , "+"\'"+row["status"]+"\'"+" , "+"\'"+row["description"]+"\'"+" , "+"\'"+row["notes"]+"\'"+" , "+samt+" , "+famt+" , "+desr+" , "+dt
+            
+           Promise.resolve(sql.query(`insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values(`+val+`);`).catch(err=>{
            console.log(err.message)
-        
-        //  Promise.resolve(this.resetCount().catch(err=>err.message)).catch(err=>{ console.log(err.message)})
-         //   console.log("row: "+ val) 
+          Promise.resolve(this.resetCount().catch(err=>err.message)).catch(err=>{ console.log(err.message)})
         
         })).catch(err=>{ console.log(err.message)
          })
@@ -193,7 +204,7 @@ exports.getAllData= async function (){
 }
 
 exports.resetCount= async function(){
-    sql.query(`select count(description) from disrepency where description <> 'exists in none';`).then(res=>{
+    sql.query(`select count(stripe_charge_id) from disrepency;`).then(res=>{
         let x = Number(res.rows[0].count) + 1
         console.log( 'Count reset :' + x)
         sql.query(queries.resetCount+ x + ' ;').catch(err=>console.error(err.message))

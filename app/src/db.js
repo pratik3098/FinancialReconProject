@@ -174,12 +174,17 @@ exports.insertDataIntoDes= async function (){
            let dt = "\'"+ this.sqlDateFormat(moment(row["date"]).format())  + "\'"
            if (row["date"] === null)
            dt = 'NULL'
-          // console.log("Desrepecy Amount: "+row["desrepency_amount"])
           let val ="\'"+row["stripe_charge_id"]+"\'"+" , "+"\'"+row["status"]+"\'"+" , "+"\'"+row["description"]+"\'"+" , "+"\'"+row["notes"]+"\'"+" , "+samt+" , "+famt+" , "+desr+" , "+dt
             
-           Promise.resolve(sql.query(`insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values(`+val+`);`).catch(err=>{
+           Promise.resolve(sql.query(`insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values(`+val+`);`).catch((err)=>{
            console.log(err.message)
-          Promise.resolve(this.resetCount().catch(err=>err.message)).catch(err=>{ console.log(err.message)})
+
+           return new Promise((resolve,reject)=>{ sql.query(`select count(stripe_charge_id) from disrepency;`).then(res=>{
+            let x = Number(res.rows[0].count) + 1
+            console.log( 'Count reset :' + x)
+            resolve(sql.query(queries.resetCount+ x + ' ;'))            
+        }).catch(err=>{console.log(err.message)})
+           })
         
         })).catch(err=>{ console.log(err.message)
          })

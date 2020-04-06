@@ -738,6 +738,7 @@ const onChangeSetEnd=(event)=>{
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -764,7 +765,7 @@ const onChangeSetEnd=(event)=>{
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
-
+               
                   return (
                     <TableRow
                       role="checkbox"
@@ -777,7 +778,7 @@ const onChangeSetEnd=(event)=>{
 
                       <TableCell component="th" scope="row">
                         <SimplePopover
-                          dt={{ id: row.discrepency_id, notes: row.notes }}
+                          dt={{ id: (index + 1), notes: row.notes }}
                         />
                       </TableCell>
                       <TableCell align="center">

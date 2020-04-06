@@ -157,7 +157,7 @@ exports.getMinDate =async function(){
 
 exports.insertDataIntoDes= async function (){
     await sql.query(queries.deleteNULL).catch(err=>{console.log(err.message)})
-    await this.resetCount().catch(err=>console.error(err.message))
+   // await this.resetCount().catch(err=>console.error(err.message))
     //await sql.query(queries.insertAllData).catch(err=>{console.log(err.message)})
     await sql.query(`select  (stripe.id) as Stripe_Charge_ID, ('new') as Status , ('amount mis-match') as Description, (' ') as Notes, stripe.amount, facedrive.up_amount_charged, (CAST (facedrive.up_amount_charged - stripe.amount  as int)) as Desrepency_Amount,  (stripe.created_utc) as Date from facedrive FULL JOIN stripe ON facedrive.amount_charged_id = stripe.source;`).then(res=>{
         res.rows.forEach(row =>{
@@ -175,22 +175,13 @@ exports.insertDataIntoDes= async function (){
            if (row["date"] === null)
            dt = 'NULL'
           let val ="\'"+row["stripe_charge_id"]+"\'"+" , "+"\'"+row["status"]+"\'"+" , "+"\'"+row["description"]+"\'"+" , "+"\'"+row["notes"]+"\'"+" , "+samt+" , "+famt+" , "+desr+" , "+dt
-            
-           Promise.resolve(sql.query(`insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values(`+val+`);`).catch((err)=>{
-           console.log(err.message)
-
-           return new Promise((resolve,reject)=>{ sql.query(`select count(stripe_charge_id) from disrepency;`).then(res=>{
-            let x = Number(res.rows[0].count) + 1
-            console.log( 'Count reset :' + x)
-            resolve(sql.query(queries.resetCount+ x + ' ;'))            
-        }).catch(err=>{console.log(err.message)})
-           })
-        
-        })).catch(err=>{ console.log(err.message)
+           Promise.resolve(this.getCountofTxn(row["stripe_charge_id"]).then(res1=>{
+                  if(res1 == 0){
+                    Promise.resolve(sql.query(`insert into disrepency (Stripe_Charge_ID, Status, Description, Notes, Stripe_Amount, FD_Amount, Desrepency_Amount, Date) Values(`+val+`);`).catch((err)=>{
+                        console.log(err.message)}))
+                  }
+           }).catch(err=>{console.log(err.message)})).catch(err=>{console.log(err.message)})
          })
-    
-        })
-
         
     })
     await sql.query(queries.updateProperStatus).catch(err=>{console.log(err.message)})
@@ -209,10 +200,10 @@ exports.getAllData= async function (){
 }
 
 exports.resetCount= async function(){
-    sql.query(`select count(stripe_charge_id) from disrepency;`).then(res=>{
+   await sql.query(`select count(stripe_charge_id) from disrepency;`).then(res=>{
         let x = Number(res.rows[0].count) + 1
         console.log( 'Count reset :' + x)
-        sql.query(queries.resetCount+ x + ' ;').catch(err=>console.error(err.message))
+  Promise.resolve( sql.query(queries.resetCount+ x + ' ;').catch(err=>console.error(err.message))).catch(err=>console.log(err.message))
     }).catch(err=>{console.log(err.message)})
 }
 
@@ -223,6 +214,11 @@ exports.getCount=async function(){
 
 exports.sqlDateFormat= function(dt){
     return dt.substring(0,10)+ " " +dt.substring(11,19)
+}
+
+exports.getCountofTxn = async function(txn_id){
+    let result = await sql.query(`select count (*) from disrepency where stripe_charge_id = '`+txn_id+`';`).catch(err=>console.log(err.message))
+    return (Number(result.rows[0].count))
 }
 //this.connectToDb().catch(err=>{console.error(err.message)})
 //this.createDefaultTables().catch(err=>{console.error(err.message)})
@@ -246,3 +242,6 @@ exports.sqlDateFormat= function(dt){
 //this.readSTData().then(res=>{  console.log(res)}).catch(err=>{console.error(err.message)}) 
 //this.resetCount().catch(err=>console.error(err.message))
 //this.getCount().catch(err=>console.error(err.message))
+/*this.getCountofTxn('0').then(res=>{console.log(res) 
+        console.log(typeof res)
+})*/

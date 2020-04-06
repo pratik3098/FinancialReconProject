@@ -778,7 +778,7 @@ const onChangeSetEnd=(event)=>{
 
                       <TableCell component="th" scope="row">
                         <SimplePopover
-                          dt={{ id: (index + 1), notes: row.notes }}
+                          dt={{ id: ((page * rowsPerPage) + index + 1), notes: row.notes }}
                         />
                       </TableCell>
                       <TableCell align="center">

@@ -60,14 +60,14 @@ exports.dataWithInconsistencyOld= `select ride_id, amount_charged_id, fee, up_fa
 exports.disrepencyStatus= `CREATE TYPE  disrepencyStatus AS ENUM ('new', 'reconcile rejected'); `
 exports.disrepencyDescription = `CREATE TYPE disrepencyDescription As ENUM ('no disrepency', 'amount mis-match', 'exists in App Only', 'exists in Stripe Only');`
 exports.createDisrepencyTable = ` CREATE TABLE disrepency (
-    Discrepency_ID     SERIAL PRIMARY KEY,
-    Stripe_Charge_ID   VARCHAR(28) NOT NULL,
+    Discrepency_ID     SERIAL,
+    Stripe_Charge_ID   VARCHAR(28) NOT NULL  PRIMARY KEY,
     Status             disrepencyStatus DEFAULT 'new',
     Description        disrepencyDescription DEFAULT 'no disrepency',
     Notes              VARCHAR(100),
-    Stripe_Amount      NUMERIC NOT NULL DEFAULT 0,
-    FD_Amount          NUMERIC NOT NULL DEFAULT 0,
-    Desrepency_Amount  NUMERIC NOT NULL DEFAULT 0,
+    Stripe_Amount      NUMERIC  DEFAULT 0,
+    FD_Amount          NUMERIC  DEFAULT 0,
+    Desrepency_Amount  NUMERIC  DEFAULT 0,
     Date               TIMESTAMP NOT NULL
 );`
 
